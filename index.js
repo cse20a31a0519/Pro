@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebas
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 import { get} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
 // const free= [
 //       {
 //           "id": 1,
@@ -521,3 +522,4 @@ if (btns) {
     });
   }
 });
+export { app, auth, database };
