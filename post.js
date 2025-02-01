@@ -575,65 +575,65 @@ function navigateToPayment(courseId) {
 }
 
 // Function to handle enrollment
-const handleEnrollment = (course, userId) => {
-    if (!course || !course.type) {
-        console.error("Course object is undefined or missing type property.");
-        Swal.fire('Error!', 'Invalid course data.', 'error');
-        return;
-    }
+// const handleEnrollment = (course, userId) => {
+//     if (!course || !course.type) {
+//         console.error("Course object is undefined or missing type property.");
+//         Swal.fire('Error!', 'Invalid course data.', 'error');
+//         return;
+//     }
 
-    if (course.type === "premium") {
-        Swal.fire({
-            title: 'Confirm Payment',
-            text: "This is a premium course. Please complete the payment to enroll.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Go to Payment',
-            cancelButtonText: 'Cancel'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                navigateToPayment(course.id); // Redirect to payment page
-            }
-        });
-    } else {
-        enrollCourse(course, userId); // Enroll in free course
-    }
-};
+//     if (course.type === "premium") {
+//         Swal.fire({
+//             title: 'Confirm Payment',
+//             text: "This is a premium course. Please complete the payment to enroll.",
+//             icon: 'warning',
+//             showCancelButton: true,
+//             confirmButtonText: 'Go to Payment',
+//             cancelButtonText: 'Cancel'
+//         }).then((result) => {
+//             if (result.isConfirmed) {
+//                 navigateToPayment(course.id); // Redirect to payment page
+//             }
+//         });
+//     } else {
+//         enrollCourse(course, userId); // Enroll in free course
+//     }
+// };
 
-// Function to enroll the user in a course
-const enrollCourse = (course, userId) => {
-    const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
+// // Function to enroll the user in a course
+// const enrollCourse = (course, userId) => {
+//     const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
 
-    get(userCoursesRef).then((snapshot) => {
-        let enrolledCourses = snapshot.val() || [];
+//     get(userCoursesRef).then((snapshot) => {
+//         let enrolledCourses = snapshot.val() || [];
 
-        // Check if the user is already enrolled in the course
-        if (!enrolledCourses.some(enrolledCourse => enrolledCourse.id === course.id)) {
-            enrolledCourses.push(course);
+//         // Check if the user is already enrolled in the course
+//         if (!enrolledCourses.some(enrolledCourse => enrolledCourse.id === course.id)) {
+//             enrolledCourses.push(course);
 
-            set(userCoursesRef, enrolledCourses)
-                .then(() => {
-                    Swal.fire('Success!', 'You have successfully enrolled!', 'success');
-                    enablePlayAllButton(course.id); // Enable "Play All" button
-                })
-                .catch((error) => {
-                    Swal.fire('Error!', 'There was an error enrolling in the course.', 'error');
-                });
-        } else {
-            Swal.fire('Info', 'You are already enrolled in this course.', 'info');
-            enablePlayAllButton(course.id); // Enable "Play All" button if already enrolled
-        }
-    });
-};
+//             set(userCoursesRef, enrolledCourses)
+//                 .then(() => {
+//                     Swal.fire('Success!', 'You have successfully enrolled!', 'success');
+//                     enablePlayAllButton(course.id); // Enable "Play All" button
+//                 })
+//                 .catch((error) => {
+//                     Swal.fire('Error!', 'There was an error enrolling in the course.', 'error');
+//                 });
+//         } else {
+//             Swal.fire('Info', 'You are already enrolled in this course.', 'info');
+//             enablePlayAllButton(course.id); // Enable "Play All" button if already enrolled
+//         }
+//     });
+// };
 
 // Function to enable the "Play All" button
-const enablePlayAllButton = (courseId) => {
-    const playAllButton = document.querySelector(`button.play-all[data-course-id="${courseId}"]`);
-    if (playAllButton) {
-        playAllButton.disabled = false;
-        playAllButton.innerText = "Play All";
-    }
-};
+// const enablePlayAllButton = (courseId) => {
+//     const playAllButton = document.querySelector(`button.play-all[data-course-id="${courseId}"]`);
+//     if (playAllButton) {
+//         playAllButton.disabled = false;
+//         playAllButton.innerText = "Play All";
+//     }
+// };
 
 // Function to display courses
 // const displayCourses = (courses, userId) => {
@@ -727,62 +727,62 @@ onAuthStateChanged(auth, (user) => {
 //         return [];
 //     }
 // };
-const displayCourses = (courses, userId) => {
-    const coursesContainer = document.getElementById("courses-container");
-    coursesContainer.innerHTML = "";
+// const displayCourses = (courses, userId) => {
+//     const coursesContainer = document.getElementById("courses-container");
+//     coursesContainer.innerHTML = "";
 
-    courses.forEach((course) => {
-        const courseElement = document.createElement("div");
-        courseElement.className = "col-md-4 mb-4 course-card";
+//     courses.forEach((course) => {
+//         const courseElement = document.createElement("div");
+//         courseElement.className = "col-md-4 mb-4 course-card";
 
-        let imageUrl = course.image;
-        if (imageUrl && imageUrl.startsWith("hhttps")) {
-            imageUrl = imageUrl.replace("hhttps", "https");
-        }
+//         let imageUrl = course.image;
+//         if (imageUrl && imageUrl.startsWith("hhttps")) {
+//             imageUrl = imageUrl.replace("hhttps", "https");
+//         }
 
-        const isPremium = course.type === "premium";
+//         const isPremium = course.type === "premium";
 
-        // Use course.id directly from Firebase data
-        const courseId = course.id; // Get the ID from the Firebase data
+//         // Use course.id directly from Firebase data
+//         const courseId = course.id; // Get the ID from the Firebase data
 
-        courseElement.innerHTML = `
-            <div class="card h-100">
-                <img src="${imageUrl}" class="card-img-top img-fluid" alt="${course.title}">
-                <div class="card-body">
-                    <h5 class="card-title">${course.title}</h5>
-                    <p class="card-text">${course.description}</p>
-                    <div class="btn-container">
-                        <button class="btn btn-secondary mt-2 play-all" data-course-id="${courseId}" ${isPremium ? 'disabled' : ''}>Play All</button>
-                        <button class="btn btn-primary enroll" data-course-id="${courseId}">Enroll</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        coursesContainer.appendChild(courseElement);
-    });
+//         courseElement.innerHTML = `
+//             <div class="card h-100">
+//                 <img src="${imageUrl}" class="card-img-top img-fluid" alt="${course.title}">
+//                 <div class="card-body">
+//                     <h5 class="card-title">${course.title}</h5>
+//                     <p class="card-text">${course.description}</p>
+//                     <div class="btn-container">
+//                         <button class="btn btn-secondary mt-2 play-all" data-course-id="${courseId}" ${isPremium ? 'disabled' : ''}>Play All</button>
+//                         <button class="btn btn-primary enroll" data-course-id="${courseId}">Enroll</button>
+//                     </div>
+//                 </div>
+//             </div>
+//         `;
+//         coursesContainer.appendChild(courseElement);
+//     });
 
-    // Add event listeners (same as before)
-    document.querySelectorAll('.enroll').forEach(button => {
-        button.addEventListener('click', () => {
-            const courseId = button.dataset.courseId;
-            const course = courses.find(c => c.id === courseId); // Find the course object
+//     // Add event listeners (same as before)
+//     document.querySelectorAll('.enroll').forEach(button => {
+//         button.addEventListener('click', () => {
+//             const courseId = button.dataset.courseId;
+//             const course = courses.find(c => c.id === courseId); // Find the course object
 
-            if (course) { // Check if the course was found
-                handleEnrollment(course, userId);
-            } else {
-                console.error("Course not found for ID:", courseId);
-                Swal.fire('Error!', 'Course not found.', 'error');
-            }
-        });
-    });
+//             if (course) { // Check if the course was found
+//                 handleEnrollment(course, userId);
+//             } else {
+//                 console.error("Course not found for ID:", courseId);
+//                 Swal.fire('Error!', 'Course not found.', 'error');
+//             }
+//         });
+//     });
 
-    document.querySelectorAll('.play-all').forEach(button => {
-        button.addEventListener('click', () => {
-            const courseId = button.dataset.courseId;
-            navigateToSingleCourse(courseId);
-        });
-    });
-};
+//     document.querySelectorAll('.play-all').forEach(button => {
+//         button.addEventListener('click', () => {
+//             const courseId = button.dataset.courseId;
+//             navigateToSingleCourse(courseId);
+//         });
+//     });
+// };
 
 onAuthStateChanged(auth, (user) => {
     // ... (same as before)
@@ -809,5 +809,193 @@ const fetchCourses = async () => {
     } catch (error) {
         console.error("Error fetching courses:", error);
         return [];
+    }
+};
+
+const enrollCourse = (course, userId) => {
+    console.log("Enrolling course:", course.title, "with ID:", course.id, "for user ID:", userId);
+
+    const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
+
+    get(userCoursesRef).then((snapshot) => {
+        let enrolledCourses = snapshot.val() || [];
+
+        if (!enrolledCourses.some(enrolledCourse => enrolledCourse.id === course.id)) {
+            Swal.fire({ // Prompt for email and phone number
+                title: `Enroll in ${course.title}`,
+                html: `
+                    <input id="swal-input-email" class="swal2-input" placeholder="Email">
+                    <input id="swal-input-phone" class="swal2-input" placeholder="Phone Number">
+                `,
+                focusConfirm: false,
+                preConfirm: () => {
+                    const email = document.getElementById('swal-input-email').value;
+                    const phone = document.getElementById('swal-input-phone').value;
+                    if (!email || !phone) {
+                        Swal.showValidationMessage(`Please enter both email and phone number`);
+                    }
+                    return { email: email, phone: phone };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const { email, phone } = result.value;  // Get entered data
+                    course.email = email; // Add email and phone to course object
+                    course.phone = phone;
+
+                    enrolledCourses.push(course);
+
+                    set(userCoursesRef, enrolledCourses)
+                        .then(() => {
+                            Swal.fire('Thank you!', 'You have successfully enrolled!', 'success');
+                            navigateToSingleCourse(course.id); // Navigate immediately after successful enrollment
+                        })
+                        .catch((error) => {
+                            console.error("Error enrolling:", error);
+                            Swal.fire('Error!', 'There was an error enrolling in the course.', 'error');
+                        });
+                }
+            });
+
+
+        } else {
+            Swal.fire('Info', 'You are already enrolled in this course.', 'info');
+            navigateToSingleCourse(course.id); // Navigate immediately if already enrolled
+        }
+    });
+};
+// const enrollCourse = (course, userId) => {
+//     const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
+
+//     get(userCoursesRef).then((snapshot) => {
+//         let enrolledCourses = snapshot.val() || [];
+
+//         if (!enrolledCourses.some(enrolledCourse => enrolledCourse.id === course.id)) {
+//             enrolledCourses.push(course);
+
+//             set(userCoursesRef, enrolledCourses)
+//                 .then(() => {
+//                     Swal.fire('Success!', 'You have successfully enrolled!', 'success');
+//                     enablePlayAllButton(course.id); // Enable "Play All" button after successful enrollment
+//                 })
+//                 .catch((error) => {
+//                     Swal.fire('Error!', 'There was an error enrolling in the course.', 'error');
+//                 });
+//         } else {
+//             Swal.fire('Info', 'You are already enrolled in this course.', 'info');
+//             enablePlayAllButton(course.id); // Enable "Play All" button if already enrolled
+//         }
+//     });
+// };
+
+const handleEnrollment = (course, userId) => {
+    if (!course || !course.type || !course.id) { // Check for missing course properties
+        console.error("Course object is invalid:", course);
+        Swal.fire('Error!', 'Invalid course data.', 'error');
+        return;
+    }
+
+    if (course.type === "premium") {
+        Swal.fire({
+            title: 'Confirm Payment',
+            text: "This is a premium course. Please complete the payment to enroll.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Go to Payment',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigateToPayment(course.id); // Redirect to payment page
+            }
+        });
+    } else {
+        enrollCourse(course, userId); // Enroll in free course
+    }
+};
+
+
+const displayCourses = (courses, userId) => {
+    const coursesContainer = document.getElementById("courses-container");
+    coursesContainer.innerHTML = "";
+
+    courses.forEach((course) => {
+        const courseElement = document.createElement("div");
+        courseElement.className = "col-md-4 mb-4 course-card";
+
+        let imageUrl = course.image;
+        if (imageUrl && imageUrl.startsWith("hhttps")) {
+            imageUrl = imageUrl.replace("hhttps", "https");
+        }
+
+        const isPremium = course.type === "premium";
+        const courseId = course.id;
+
+        courseElement.innerHTML = `
+            <div class="card h-100">
+                <img src="${imageUrl}" class="card-img-top img-fluid" alt="${course.title}">
+                <div class="card-body">
+                    <h5 class="card-title">${course.title}</h5>
+                    <p class="card-text">${course.description}</p>
+                    <div class="btn-container">
+                        <button class="btn btn-secondary mt-2 play-all" data-course-id="${courseId}" ${isPremium ? 'disabled' : ''}>Play All</button>
+                        <button class="btn btn-primary enroll ${isPremium ? 'premium-enroll' : ''}" data-course-id="${courseId}" style="${isPremium ? 'background-color: orange; border-color: orange;' : ''}">
+                            ${isPremium ? 'Enroll (Premium)' : 'Enroll'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        coursesContainer.appendChild(courseElement);
+    });
+
+    // Event listeners (after the cards are added to the DOM)
+    document.querySelectorAll('.enroll').forEach(button => {
+        button.addEventListener('click', () => {
+            const courseId = Number(button.dataset.courseId);
+            const course = courses.find(c => c.id === courseId);
+
+            if (course) {
+                handleEnrollment(course, userId);
+            } else {
+                console.error("Course not found for ID:", courseId);
+                Swal.fire('Error!', 'Course not found.', 'error');
+            }
+        });
+    });
+
+    document.querySelectorAll('.play-all').forEach(button => {
+        button.addEventListener('click', () => {
+            const courseId = Number(button.dataset.courseId);
+            const course = courses.find(c => c.id === courseId);
+
+            if (course) {
+                const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
+
+                get(userCoursesRef).then((snapshot) => {
+                    const enrolledCourses = snapshot.val() || [];
+                    const isEnrolled = enrolledCourses.some(enrolledCourse => enrolledCourse.id === course.id);
+
+                    if (isEnrolled) {
+                        navigateToSingleCourse(courseId);
+                    } else {
+                        Swal.fire('Info', 'Please enroll in the course first.');
+                    }
+                }).catch(error => {
+                    console.error("Error fetching enrolled courses:", error);
+                    Swal.fire('Error!', 'An error occurred. Please try again later.', 'error');
+                });
+            } else {
+                console.error("Course not found for ID:", courseId);
+                Swal.fire('Error!', 'Course not found.', 'error');
+            }
+        });
+    });
+};
+
+
+
+const enablePlayAllButton = (courseId) => {
+    const playAllButton = document.querySelector(`.play-all[data-course-id="${courseId}"]`);
+    if (playAllButton) {
+        playAllButton.disabled = false;
     }
 };
