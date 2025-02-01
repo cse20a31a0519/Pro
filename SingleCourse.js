@@ -322,11 +322,13 @@ document.addEventListener('DOMContentLoaded', function () {
     videoItems.forEach((item, index) => {
         const videoUrl = item.querySelector('.video-url a');
 
-        // When the video URL is clicked, display the video in the video display div
+        // When the video URL is clicked, fetch the href and display the video in the video display div
         videoUrl.addEventListener('click', function (event) {
             event.preventDefault(); // Prevent default link behavior
+
+            const videoSrc = videoUrl.getAttribute('href'); // Fetch the video URL from the 'href' attribute
             videoDisplay.style.display = 'block'; // Show the video display div
-            videoDisplay.innerHTML = `<iframe width="100%" height="100%" src="https://www.example.com/video${index+1}" frameborder="0" allowfullscreen></iframe>`;
+            videoDisplay.innerHTML = `<iframe width="100%" height="100%" src="${videoSrc}" frameborder="0" allowfullscreen></iframe>`;
         });
 
         // Complete button click
@@ -345,3 +347,59 @@ document.addEventListener('DOMContentLoaded', function () {
         alert('Certificate Generated!');
     });
 });
+
+// document.addEventListener('DOMContentLoaded', function () {
+//     let totalVideos = 10;
+//     let completedVideos = 0;
+//     const progressBar = document.querySelector('progress');
+//     const generateCertificateBtn = document.getElementById('generate-certificate');
+//     const videoItems = document.querySelectorAll('.video-item');
+//     const videoDisplay = document.getElementById('video-display'); // Video display div
+
+//     // Update the global progress bar
+//     function updateProgressBar() {
+//         let progress = (completedVideos / totalVideos) * 100;
+//         progressBar.value = progress;
+
+//         // Enable the certificate button when 100% progress is reached
+//         if (progress === 100) {
+//             generateCertificateBtn.disabled = false;
+//         }
+//     }
+
+//     // Mark a video as completed
+//     function markVideoAsCompleted(videoIndex) {
+//         completedVideos++;
+//         videoItems[videoIndex].classList.add('active');
+//         videoItems[videoIndex].querySelector('.btn-success').textContent = 'Completed';
+//         videoItems[videoIndex].querySelector('.btn-success').disabled = true; // Disable the Complete button
+//         updateProgressBar();
+//     }
+
+//     // Add event listeners to each video
+//     videoItems.forEach((item, index) => {
+//         const videoUrl = item.querySelector('.video-url a');
+
+//         // When the video URL is clicked, display the video in the video display div
+//         videoUrl.addEventListener('click', function (event) {
+//             event.preventDefault(); // Prevent default link behavior
+//             videoDisplay.style.display = 'block'; // Show the video display div
+//             videoDisplay.innerHTML = `<iframe width="100%" height="100%" src="https://www.example.com/video${index+1}" frameborder="0" allowfullscreen></iframe>`;
+//         });
+
+//         // Complete button click
+//         item.querySelector('.btn-success').addEventListener('click', function () {
+//             markVideoAsCompleted(index);
+//         });
+
+//         // Watch Later button click
+//         item.querySelector('.btn-secondary').addEventListener('click', function () {
+//             alert(`You chose to watch Video ${index+1} later.`);
+//         });
+//     });
+
+//     // Enable Certificate generation after all videos are completed
+//     generateCertificateBtn.addEventListener('click', function () {
+//         alert('Certificate Generated!');
+//     });
+// });

@@ -1,78 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Payment</title>
     <style>
         body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    background: white;
-    padding: 20px;
-    max-width: 400px;
-    margin: auto;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-.hidden {
-    display: none;
-}
-
-input, button {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-}
-
-button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #218838;
-}
+            font-family: sans-serif;
+        }
+        #payment-details {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        #payment-result { /* Style for the payment result message */
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
 
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 </head>
 <body>
-    <div class="container">
-        <h2>Course Payment</h2>
-        <p>Course: <strong id="courseTitle"></strong></p>
-        <p>Price: <strong id="coursePrice"></strong></p>
 
-        <h3>Select Payment Method:</h3>
+    <h1>Course Payment</h1>
+
+    <div id="payment-details">
+        <p><strong>Course:</strong> <span id="course-title"></span></p>
+        <p><strong>Price:</strong> <span id="course-price"></span></p>
+
         <label>
-            <input type="radio" name="paymentMethod" value="card"> Credit/Debit Card
-        </label>
-        <div id="cardDetails" class="hidden">
-            <input type="text" placeholder="Card Number" id="cardNumber"><br>
-            <input type="text" placeholder="MM/YY" id="expiry"><br>
-            <input type="text" placeholder="CVV" id="cvv"><br>
-        </div>
-
+            <input type="radio" name="paymentMethod" value="card" checked> Credit/Debit Card
+        </label><br>
         <label>
             <input type="radio" name="paymentMethod" value="upi"> UPI Payment
-        </label>
-        <div id="upiDetails" class="hidden">
-            <input type="text" placeholder="Enter UPI ID" id="upiId"><br>
-        </div>
+        </label><br>
 
-        <button id="payButton">Pay Now</button>
+        <button id="pay-now">Pay Now</button>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <div id="payment-result"></div>  </body>
+
 </body>
 </html>

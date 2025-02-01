@@ -8,6 +8,54 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
+
+
+
+/* CSS for card height, padding, and image centering/width */
+
+.card-container {
+    display: flex; /* or grid */
+    flex-wrap: wrap; /* If using flexbox */
+    gap: 20px; /* Space between cards */
+    padding: 20px; /* Padding around the container */
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.card {
+    height: 100%; /* Make all cards the same height */
+    display: flex;
+    flex-direction: column; /* Ensure content flows vertically */
+}
+
+.card .card-img-top { /* Target the image directly */
+    width: 72%; /* Occupy 60% of the card width */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: cover; /* or contain */
+    padding: 30px ; /* Add padding around the image */
+    margin: 0 auto; /* Center the image horizontally */
+    display: block; /* Important for centering */
+}
+
+.card-body {
+    flex-grow: 1; /* Allow card body to expand */
+}
+
+.card-price {
+    font-weight: bold;
+}
+
+.btn-container {
+    margin-top: auto; /* Push buttons to the bottom */
+}
+
+/* Any other styles you already have for your cards */
+
+
+         .container {
+        display: none; /* Hide the container initially */
+    }
         #courses-container {
             display: flex;
             flex-wrap: wrap;
@@ -39,6 +87,82 @@
     </style>
 </head>
 <body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#"><h2> EduSpark </h2></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto"> <!-- Centered navbar links -->
+                      <li class="nav-item">
+                        <a class="nav-link" href="#about"><h5>About</h5>
+                            <i></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#categories">
+                            <i></i> <h5>Categories</h5>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">
+                            <i></i><h5> PricingPlans</h5>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#features">
+                          <i></i> <h5>features</h5>
+                      </a>
+                  </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">
+                            <i></i><h5> Contact</h5>
+                        </a>
+                    </li>
+                    
+                    </ul>
+                    <div class="auth-buttons d-flex">
+                                <button id="Logout">Logout</button>
+                                </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="card-container">
+
+        <div class="card animate__animated">
+            <img src="image1.jpg" alt="Image 1">
+            <div class="card-body">
+                <h3 class="card-title">Card 1 Title</h3>
+                <button id="it" class="card-button">Explore It courses</button>
+            </div>
+        </div>
+    
+        <div class="card animate__animated">
+            <img src="image2.jpg" alt="Image 2">
+            <div class="card-body">
+                <h3 class="card-title">Card 2 Title</h3>
+                <button id="dg" class="card-button">Explore Designing Courses</button>
+                <button >Click Me</button>
+            </div>
+        </div>
+    
+        <div class="card animate__animated">
+            <img src="image3.jpg" alt="Image 3">
+            <div class="card-body">
+                <h3 class="card-title">Card 3 Title</h3>
+                <button id="ds"  class="card-button">Explore DataScience Courses</button>
+            </div>
+        </div>
+    
+    </div>
+    <div>
+        <button id="dg">Explore Designing Courses</button>
+        <button id="ds">Explore DataScience Courses</button>
+        
+    </div>
     <div class="container">
         <div class="row" id="courses-container"></div>
     </div>

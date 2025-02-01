@@ -7,11 +7,14 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <script type="module" src="index.js"></script>
   <style>
     /* main Section */
   #main{
     background-size: cover;
+    background-repeat: repeat-x;
     background-image: url('https://education.ec.europa.eu/sites/default/files/2022-12/AdobeStock_530649975.jpg');
   }
   .main-section {
@@ -58,6 +61,127 @@
   font-size: 1.5rem;
   margin-bottom: 30px;
 } 
+
+.section {
+  padding: 60px 15px;
+}
+
+.features-section, .pricing-section {
+  background-color: #f8f9fa;
+}
+
+/* Feature and Pricing Items */
+.feature-item, .pricing-item {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  transition: transform 0.3s ease-in-out;
+  text-align: center;
+}
+
+.feature-item:hover, .pricing-item:hover {
+  transform: scale(1.05);
+}
+
+.feature-item h3, .pricing-item h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.feature-item p, .pricing-item p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.pricing-item .price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.pricing-item button {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.pricing-item button:hover {
+  background-color: #0056b3;
+}
+
+/* Navbar */
+.navbar-nav .nav-link {
+  font-size: 18px;
+  margin-right: 15px;
+  color: #333;
+  transition: color 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #007bff;
+}
+
+/* Categories Section */
+.feature-item {
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.feature-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Contact Section */
+#contact {
+  background-color: #f8f9fa;
+  padding: 40px 20px;
+}
+
+#contact p {
+  font-size: 18px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-nav {
+      text-align: center;
+  }
+  
+  .auth-buttons {
+      justify-content: center;
+      margin-top: 10px;
+  }
+
+  .pricing-item {
+      margin-bottom: 20px;
+  }
+}
+
+
+@media (min-width: 768px) {
+  .main-title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .feature-item, .pricing-item {
+    width: 90%;
+    margin: auto;
+    margin-bottom: 20px;
+  }
+}
+
+
 </style>
 
 </head>
@@ -74,27 +198,27 @@
                 <ul class="navbar-nav mx-auto"> <!-- Centered navbar links -->
                   <li class="nav-item">
                     <a class="nav-link" href="#about"><h5>About</h5>
-                        <i class="fas fa-user"></i>
+                        <i></i>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#Categories">
-                        <i class="fas fa-credit-card"></i> <h5>Categories</h5>
+                    <a class="nav-link" href="#categories">
+                        <i></i> <h5>Categories</h5>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#about">
-                        <i class="fas fa-certificate"></i><h5> PricingPlans</h5>
+                    <a class="nav-link" href="#pricing">
+                        <i></i><h5> PricingPlans</h5>
                     </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#reviews">
-                      <i class="fas fa-cart-plus"></i> <h5>reviews</h5>
+                  <a class="nav-link" href="#features">
+                      <i></i> <h5>features</h5>
                   </a>
               </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#contact">
-                        <i class="fas fa-clock"></i><h5> Contact</h5>
+                        <i></i><h5> Contact</h5>
                     </a>
                 </li>
                 
@@ -135,8 +259,6 @@
     </div>
   </div>
 </div>
-
-<!-- Login Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -160,7 +282,7 @@
     </div>
   </div>
 </div>
-<!-- main Section -->
+
 <section class="main-section">
   <div class="container">
     <div class="row align-items-center">
@@ -172,36 +294,96 @@
     </div>
   </div>
 </section>
+</div>
 
 
+<section id="about" class="section text-center">
+  <h2 class="main-title">About EduSpark</h2>
+  <p>EduSpark is an innovative platform dedicated to enhancing learning experiences through high-quality resources. We provide courses on the latest technologies, helping individuals and professionals upskill and advance in their careers.
+    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repudiandae illum voluptates necessitatibus et rerum quibusdam nesciunt maiores fugiat, vel accusamus voluptate cupiditate eum minima dolorem dolor totam praesentium adipisci porro?
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla vero neque blanditiis debitis nesciunt, corporis architecto dicta error impedit, ducimus eius officia nostrum deleniti odit possimus dolor beatae itaque animi.
+  </p>
+  
 
-  <!-- Features Section -->
-  <section class="features-section py-5">
-    <div class="container">
-      <div class="row text-center">
-        <div class="col-md-4">
-          <div class="feature-item">
-            <h3>Expert Instructors</h3>
-            <p>Learn from industry experts with years of experience.</p>
-          </div>
+</section>
+<section id="pricing" class="section text-center pricing-section">
+  <h2 class="main-title">Choose Your Plan</h2>
+  <p>Each week we provide top-tier educational resources for your learning journey.</p>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-4 pricing-item">
+        <h3>Monthly</h3>
+        <p class="price">$39</p>
+        <button class="btn btn-primary">Join Now</button>
+      </div>
+      <div class="col-12 col-md-4 pricing-item">
+        <h3>Annual</h3>
+        <p class="price">$399</p>
+        <button class="btn btn-primary">Join Now and Save 15%</button>
+      </div>
+      <div class="col-12 col-md-4 pricing-item">
+        <h3>Two Year</h3>
+        <p class="price">$749</p>
+        <button class="btn btn-primary">Join Now and Save 20%</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="categories" class="section text-center features-section">
+  <h2 class="main-title">Categories</h2>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-6 col-md-4 feature-item">
+        <i class="fas fa-robot fa-3x"></i>
+        <h3>AI</h3>
+      </div>
+      <div class="col-12 col-sm-6 col-md-4 feature-item">
+        <i class="fas fa-chart-line fa-3x"></i>
+        <h3>Data Science</h3>
+      </div>
+      <div class="col-12 col-sm-6 col-md-4 feature-item">
+        <i class="fas fa-laptop-code fa-3x"></i>
+        <h3>Web Development</h3>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="features-section py-5" id="features">
+  <div class="container">
+    <h4 class="main-title" style="text-align: center;">Features</h4>
+    <div class="row text-center">
+      <div class="col-md-4">
+        <div class="feature-item">
+          <h3>Expert Instructors</h3>
+          <p>Learn from industry experts with years of experience.</p>
         </div>
-        <div class="col-md-4">
-          <div class="feature-item">
-            <h3>Flexible Learning</h3>
-            <p>Study at your own pace, anytime, anywhere.</p>
-          </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-item">
+          <h3>Flexible Learning</h3>
+          <p>Study at your own pace, anytime, anywhere.</p>
         </div>
-        <div class="col-md-4">
-          <div class="feature-item">
-            <h3>Certification</h3>
-            <p>Earn certificates to showcase your skills.</p>
-          </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-item">
+          <h3>Certification</h3>
+          <p>Earn certificates to showcase your skills.</p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-</div>
+<section id="contact" class="section text-center">
+  <h4 class="main-title">Contact Us</h4>
+  <p>Follow us on social media:</p>
+  <div class="social-icons">
+    <a href="#" class="me-3"><i class="fab fa-whatsapp fa-2x"></i></a>
+    <a href="#" class="me-3"><i class="fab fa-facebook fa-2x"></i></a>
+    <a href="#"><i class="fab fa-instagram fa-2x"></i></a>
+  </div>
+</section>
 
 </body>
 </html>

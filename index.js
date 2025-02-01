@@ -392,12 +392,15 @@ if (btns) {
       // Sign in the user with email and password
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
       const userId = userCredential.user.uid; // Get the unique user ID from Firebase Auth
+      localStorage.setItem('userid', userId);
 
       // Retrieve the user data from the database
       const userSnapshot = await get(ref(database, `users/${userId}`));
       if (userSnapshot.exists()) {
         // User data exists in database, welcome back!
         const userData = userSnapshot.val(); // Get user data from the snapshot
+       
+        localStorage.setItem('userdata', userData);
 
         // Clear input fields
         document.getElementById("loginEmail").value = "";
@@ -505,6 +508,7 @@ if (btns) {
   // }
 
   // Open Login Modal
+ 
   const log = document.getElementById("log");
   if (log) {
     log.addEventListener("click", () => {
