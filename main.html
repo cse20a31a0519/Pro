@@ -8,38 +8,50 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
-
-
-
-/* CSS for card height, padding, and image centering/width */
-
-.card-container {
-    display: flex; /* or grid */
-    flex-wrap: wrap; /* If using flexbox */
-    gap: 20px; /* Space between cards */
-    padding: 20px; /* Padding around the container */
-    padding-top: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
+      .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Center cards in the container */
+    gap: 20px;
+    padding: 20px;
 }
 
 .card {
-    height: 100%; /* Make all cards the same height */
+    height: 100%;
     display: flex;
-    flex-direction: column; /* Ensure content flows vertically */
+    flex-direction: column;
+    align-items: center; /* Keep content structured inside */
+    background: #fff;
+    border-radius: 10px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px; /* Added padding */
 }
 
-.card .card-img-top { /* Target the image directly */
-    width: 72%; /* Occupy 60% of the card width */
-    height: auto; /* Maintain aspect ratio */
-    object-fit: cover; /* or contain */
-    padding: 30px ; /* Add padding around the image */
-    margin: 0 auto; /* Center the image horizontally */
-    display: block; /* Important for centering */
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+}
+
+.card .card-img-top {
+    width: 90%;
+    height: auto;
+    object-fit: contain;
+    padding: 30px;
+    margin: 0 auto; /* Center the image */
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
 }
 
 .card-body {
-    flex-grow: 1; /* Allow card body to expand */
+    flex-grow: 1;
+    text-align: left; /* Align text to the left */
+    padding: 15px;
+    width: 100%; /* Ensure full width */
 }
 
 .card-price {
@@ -47,43 +59,28 @@
 }
 
 .btn-container {
-    margin-top: auto; /* Push buttons to the bottom */
+    margin-top: auto;
+    padding-bottom: 15px;
+    text-align: left; /* Align buttons to the left */
+    width: 100%;
 }
 
-/* Any other styles you already have for your cards */
+button {
+            background-color: #17a2b8;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
 
-
-         .container {
+        button:hover {
+            background-color: #138496;
+        }
+      .container {
         display: none; /* Hide the container initially */
     }
-        #courses-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .course-card {
-            flex: 1 1 calc(33.33% - 20px); /* 3 cards per row on larger screens */
-            margin-bottom: 20px;
-        }
-        @media (max-width: 992px) {
-            .course-card {
-                flex: 1 1 calc(50% - 20px); /* 2 cards per row on medium screens */
-            }
-        }
-        @media (max-width: 576px) {
-            .course-card {
-                flex: 1 1 100%; /* 1 card per row on small screens */
-            }
-        }
-        .btn-container {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .card-img-top {
-            max-height: 200px;
-            object-fit: cover;
-        }
+        
     </style>
 </head>
 <body>
@@ -97,28 +94,28 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mx-auto"> <!-- Centered navbar links -->
                       <li class="nav-item">
-                        <a class="nav-link" href="#about"><h5>About</h5>
+                        <a class="nav-link" href="#about"><h5>User Profile</h5>
                             <i></i>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#categories">
-                            <i></i> <h5>Categories</h5>
+                            <i></i> <h5>My Courses</h5>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#pricing">
-                            <i></i><h5> PricingPlans</h5>
+                            <i></i><h5>Payments</h5>
                         </a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" href="#features">
-                          <i></i> <h5>features</h5>
+                          <i></i> <h5>Certificates</h5>
                       </a>
                   </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">
-                            <i></i><h5> Contact</h5>
+                            <i></i><h5>Saved Videos</h5>
                         </a>
                     </li>
                     
@@ -133,42 +130,41 @@
     <div class="card-container">
 
         <div class="card animate__animated">
-            <img src="image1.jpg" alt="Image 1">
+            <img src="https://thumbs.dreamstime.com/b/web-development-coding-programming-internet-technology-business-concept-web-development-coding-programming-internet-technology-121903546.jpg" alt="Image 1" width="400px">
             <div class="card-body">
-                <h3 class="card-title">Card 1 Title</h3>
-                <button id="it" class="card-button">Explore It courses</button>
+                <h3 class="card-title"> Web and It Courses</h3>
+                <button id="it" class="card-button">Explore</button>
             </div>
         </div>
     
         <div class="card animate__animated">
-            <img src="image2.jpg" alt="Image 2">
+            <img src="https://iggmarketing.com/wp-content/uploads/2020/12/Skype_Picture_2020_12_28T07_27_57_610Z.png" alt="Image 2" width="400px">
             <div class="card-body">
-                <h3 class="card-title">Card 2 Title</h3>
-                <button id="dg" class="card-button">Explore Designing Courses</button>
-                <button >Click Me</button>
+                <h3 class="card-title">Designing Courses</h3>
+                <button id="dg" class="card-button">Explore</button>
             </div>
         </div>
     
         <div class="card animate__animated">
-            <img src="image3.jpg" alt="Image 3">
+            <img src="https://i.ytimg.com/vi/yh2pLdDb87c/maxresdefault.jpg" alt="Image 3" width="400px">
             <div class="card-body">
-                <h3 class="card-title">Card 3 Title</h3>
-                <button id="ds"  class="card-button">Explore DataScience Courses</button>
+                <h3 class="card-title">DataScience Courses</h3>
+                <button id="ds"  class="card-button">Explore </button>
             </div>
         </div>
     
     </div>
-    <div>
+    <!-- <div>
         <button id="dg">Explore Designing Courses</button>
         <button id="ds">Explore DataScience Courses</button>
         
-    </div>
+    </div> -->
     <div class="container">
         <div class="row" id="courses-container"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
-    <script type="module" src="post.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 </html>

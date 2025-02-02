@@ -1,163 +1,136 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Details</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        /* General Reset */
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        /* Body */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            line-height: 1.6;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+}
 
-        /* Header */
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-        }
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
 
-        header nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-        }
+header nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
 
-        header nav a:hover {
-            text-decoration: underline;
-        }
+header nav a:hover {
+    text-decoration: underline;
+}
 
-        /* Main Container */
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-        }
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
 
-        /* Video List */
-        .video-list {
-            margin-bottom: 20px;
-        }
+.video-list {
+    margin-bottom: 20px;
+}
 
-        .video-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+.video-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
 
-        .video-item p {
-            font-size: 16px;
-        }
+.video-item p {
+    font-size: 16px;
+}
 
-        /* Highlight Active Video */
-        .video-item.active {
-            background-color: #f1f1f1;
-            border: 2px solid #007bff;
-        }
+.video-item.active {
+    background-color: #f1f1f1;
+    border: 2px solid #007bff;
+}
 
-        .video-item.active button {
-            background-color: #007bff;
-            color: white;
-        }
+.video-item.active button {
+    background-color: #007bff;
+    color: white;
+}
 
-        .video-item button {
-            font-size: 14px;
-            padding: 5px 10px;
-            margin-left: 10px;
-            cursor: pointer;
-        }
+.video-item button {
+    font-size: 14px;
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
 
-        .video-item .btn-primary {
-            background-color: #007bff;
-            color: white;
-            border: none;
-        }
+progress {
+    width: 100%;
+    height: 20px;
+    margin-bottom: 20px;
+}
 
-        .video-item .btn-primary:hover {
-            background-color: #0056b3;
-        }
+#progress-text {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
 
-        .video-item .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-        }
+#generate-certificate {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
+}
 
-        .video-item .btn-secondary:hover {
-            background-color: #5a6268;
-        }
+#generate-certificate:disabled {
+    background-color: #ccc;
+}
 
-        .video-item .btn-success {
-            background-color: #28a745;
-            color: white;
-            border: none;
-        }
+#generate-certificate:hover:not(:disabled) {
+    background-color: #218838;
+}
 
-        .video-item .btn-success:hover {
-            background-color: #218838;
-        }
+.video-display {
+    width: 100%;
+    height: 500px;
+    background-color: #000;
+    margin-top: 20px;
+    display: none;
+}
 
-        /* Progress Bar */
-        progress {
-            width: 100%;
-            height: 20px;
-            margin-bottom: 20px;
-        }
+footer {
+    background-color: #f1f1f1;
+    padding: 10px 0;
+    text-align: center;
+    color: #333;
+    font-size: 14px;
+}
 
-        #progress-text {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
+.btn-download {
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
 
-        /* Certificate Button */
-        #generate-certificate {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-            opacity: 0.6;
-        }
-
-        #generate-certificate:disabled {
-            background-color: #ccc;
-        }
-
-        #generate-certificate:hover:not(:disabled) {
-            background-color: #218838;
-        }
-
-        /* Video Display Div */
-        .video-display {
-            width: 100%;
-            height: 500px;
-            background-color: #000;
-            margin-top: 20px;
-            display: none; /* Initially hidden */
-        }
-
-        footer {
-            background-color: #f1f1f1;
-            padding: 10px 0;
-            text-align: center;
-            color: #333;
-            font-size: 14px;
-        }
-
+.btn-download:hover {
+    background-color: #138496;
+}
     </style>
 </head>
 <body>
@@ -168,50 +141,261 @@
     </header>
 
     <div id="course-detail-container" class="container">
-        <h2>Course Details</h2>
+        <h2 id="course-title">Course Title</h2>
         <div class="video-list">
-            <!-- Video 1 -->
-            <div class="video-item">
-                <p>Video 1</p>
-                <button class="btn-success">Complete</button>
-                <button class="btn-secondary">Watch Later</button>
-                <span class="video-url">Video URL: <a href="#">Watch Video</a></span>
-            </div>
-            <!-- Video 2 -->
-            <div class="video-item">
-                <p>Video 2</p>
-                <button class="btn-success">Complete</button>
-                <button class="btn-secondary">Watch Later</button>
-                <span class="video-url">Video URL: <a href="#">Watch Video</a></span>
-            </div>
-            <!-- Video 3 -->
-            <div class="video-item">
-                <p>Video 3</p>
-                <button class="btn-success">Complete</button>
-                <button class="btn-secondary">Watch Later</button>
-                <span class="video-url">Video URL: <a href="#">Watch Video</a></span>
-            </div>
-            <!-- Repeat similar structure for other videos (Video 4 to Video 10) -->
+            
         </div>
 
-        <!-- Video Display Div -->
+  
         <div id="video-display" class="video-display">
-            <!-- Video will be displayed here after URL is clicked -->
+            <video id="video-player" width="100%" height="100%" controls>
+                <source id="video-source" src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div>
+                <button id="stop-button" onclick="stopVideo()">Stop</button>
+            </div>
         </div>
 
-        <!-- Progress Bar -->
-        <progress value="0" max="100"></progress>
+      
+        <progress id="progress-bar" value="0" max="100"></progress>
         <p id="progress-text">Progress: 0%</p>
 
-        <!-- Generate Certificate Button -->
-        <button id="generate-certificate" disabled>Generate Certificate</button>
+    
+        <button id="generate-certificate" disabled onclick="generateCertificate()">Generate Certificate</button>
     </div>
 
     <footer>
-        <p>&copy; 2025 Course Platform</p>
+        <p>© 2025 Course Platform</p>
     </footer>
+
+    <script type="module" src="SingleCourse.js"></script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Videos</title>
+    <style>
+        .video-list {
+            margin-top: 20px;
+        }
+        .video-item {
+            margin-bottom: 10px;
+        }
+        #video-display {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="course-title"></h1>
+    <div id="video-display">
+        <video id="video-player" controls>
+            <source id="video-source" src="" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="video-list"></div>
+    <button id="generate-certificate" disabled onclick="generateCertificate()">Generate Certificate</button>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5iAUnK_5AP7ijrcQvlRfvCSfXrH9n6Ak",
+            authDomain: "index-16f53.firebaseapp.com",
+            projectId: "index-16f53",
+            storageBucket: "index-16f53.firebasestorage.app",
+            messagingSenderId: "171804052014",
+            appId: "1:171804052014:web:c38d9d50835d551cafadbf"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        let userId = auth.currentUser?.uid;
+        if (!userId) {
+            console.error('User not authenticated.');
+            window.location.href = "login.html";
+        }
+
+        let completedVideos = 0;
+        let totalVideos = 0;
+        let videoList = [];
+
+        // Function to parse query parameters from the URL
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                courseId: params.get('courseId'),
+                courseCategory: params.get('courseCategory')
+            };
+        }
+
+        // Fetch course data based on the query parameters
+        async function fetchCourseData() {
+            const { courseId, courseCategory } = getQueryParams();
+
+            if (!courseId || !courseCategory) {
+                console.error('Course ID or Category not found in URL.');
+                return;
+            }
+
+            // Fetch the course data using the courseCategory and courseId
+            const courseRef = ref(database, `admin/courses/${courseCategory}/${courseId}`);
+            const snapshot = await get(courseRef);
+            const courseData = snapshot.val();
+
+            if (!courseData) {
+                console.error('Course data not found.');
+                return;
+            }
+
+            // Update the course title in the UI
+            document.getElementById('course-title').textContent = courseData.title;
+
+            // Populate the video list
+            videoList = courseData.video;
+            totalVideos = videoList.length;
+
+            const videoListContainer = document.querySelector('.video-list');
+            videoListContainer.innerHTML = ''; // Clear any existing video items
+
+            videoList.forEach((video, index) => {
+                const videoItem = document.createElement('div');
+                videoItem.className = 'video-item';
+                videoItem.innerHTML = `
+                    <p>${video.title}</p>
+                    <button class="btn-success" onclick="startVideo(${index})">Start</button>
+                    <button class="btn-download" onclick="downloadVideo('${video.url}')">Download</button>
+                `;
+                videoListContainer.appendChild(videoItem);
+            });
+
+            // Load the first video by default
+            loadVideo(0);
+        }
+
+        fetchCourseData();
+
+        function loadVideo(index) {
+            const videoPlayer = document.getElementById('video-player');
+            const videoSource = document.getElementById('video-source');
+            videoSource.src = videoList[index].url;
+            videoPlayer.load();
+            videoPlayer.play();
+            document.getElementById('video-display').style.display = 'block';
+        }
+
+        function startVideo(index) {
+            loadVideo(index);
+            const videoPlayer = document.getElementById('video-player');
+            videoPlayer.onended = function () {
+                completeVideo(index);
+            };
+        }
+
+        window.stopVideo = function () {
+            const videoPlayer = document.getElementById('video-player');
+            videoPlayer.pause();
+        };
+
+        function downloadVideo(url) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = url.split('/').pop();
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function completeVideo(index) {
+            if (completedVideos < totalVideos) {
+                completedVideos++;
+                updateProgress();
+                document.querySelectorAll('.btn-success')[index].disabled = true;
+
+                // Save progress to Firebase
+                const progressRef = ref(database, `users/${userId}/progress/${courseId}`);
+                await set(progressRef, { completedVideos, totalVideos });
+            }
+        }
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const progressPercentage = (completedVideos / totalVideos) * 100;
+
+            progressBar.value = progressPercentage;
+            progressText.textContent = `Progress: ${Math.round(progressPercentage)}%`;
+
+            // Enable certificate generation if all videos are completed
+            if (completedVideos === totalVideos) {
+                document.getElementById('generate-certificate').disabled = false;
+            }
+        }
+
+        async function generateCertificate() {
+            const courseTitle = document.getElementById('course-title').textContent;
+
+            try {
+                const userCertsRef = ref(database, `users/${userId}/certificates`);
+                const certSnapshot = await get(userCertsRef);
+                const existingCerts = certSnapshot.val() || [];
+
+                const certExists = existingCerts.some(cert => cert.courseTitle === courseTitle);
+
+                if (certExists) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Already Generated',
+                        text: `You have already generated a certificate for ${courseTitle}.`,
+                        confirmButtonText: 'OK',
+                        showCloseButton: true
+                    });
+                    return;
+                }
+
+                const certificateData = {
+                    courseTitle: courseTitle,
+                    generatedOn: new Date().toISOString(),
+                };
+
+                existingCerts.push(certificateData);
+                await set(userCertsRef, existingCerts);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Certificate Generated!',
+                    text: `Your certificate for ${courseTitle} has been generated.`,
+                    confirmButtonText: 'OK',
+                    showCloseButton: true
+                }).then(() => {
+                    // Redirect to certificate.html
+                    window.location.href = `certificate.html?course=${encodeURIComponent(courseTitle)}`;
+                });
+
+            } catch (error) {
+                console.error("Error generating certificate:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'There was an error generating the certificate. Please try again later.',
+                    confirmButtonText: 'OK',
+                    showCloseButton: true
+                });
+            }
+        }
+
+        window.generateCertificate = generateCertificate;
+    </script>
 </body>
 </html>
-
-
-

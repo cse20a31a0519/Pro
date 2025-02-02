@@ -1,281 +1,247 @@
+// import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+// import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+// import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+// import { get} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+// // Your web app's Firebase configuration
+// const firebaseConfig = {
+//   apiKey: "AIzaSyB5iAUnK_5AP7ijrcQvlRfvCSfXrH9n6Ak",
+//   authDomain: "index-16f53.firebaseapp.com",
+//   projectId: "index-16f53",
+//   storageBucket: "index-16f53.firebasestorage.app",
+//   messagingSenderId: "171804052014",
+//   appId: "1:171804052014:web:c38d9d50835d551cafadbf"
+// };
+
+// // Initialize Firebase
+// const app = initializeApp(firebaseConfig);
+// const auth = getAuth(app);
+// const database = getDatabase(app);
+
+// let userId = localStorage.getItem('userid');
+// if (!userId) {
+//     console.error('User ID not found in localStorage.');
+//     window.location.href = "login.html";
+//     throw new Error("User ID is required.");
+// }
+
+// const courseCategory = localStorage.getItem('courseCategory'); // e.g., "datascience"
+// const courseId = localStorage.getItem('courseId'); // e.g., "course1"
+// console.log(courseCategory,courseId)
+
+// let completedVideos = 0;
+// let totalVideos = 0;
+// let videoList = [];
+
+// // Fetch course data from Firebase
+// async function fetchCourseData() {
+//     const courseRef = ref(database, `admin/courses/categories/${courseCategory}/${courseId}`);
+//     const snapshot = await get(courseRef);
+//     const courseData = snapshot.val();
+
+//     if (!courseData) {
+//         console.error('Course data not found.');
+//         return;
+//     }
+
+//     document.getElementById('course-title').textContent = courseData.title;
+//     videoList = courseData.videos;
+//     totalVideos = videoList.length;
+
+//     // Populate video list
+//     const videoListContainer = document.querySelector('.video-list');
+//     videoList.forEach((video, index) => {
+//         const videoItem = document.createElement('div');
+//         videoItem.className = 'video-item';
+//         videoItem.innerHTML = `
+//             <p>${video.title}</p>
+//             <button class="btn-success" onclick="startVideo(${index})">Start</button>
+//             <button class="btn-download" onclick="downloadVideo('${video.url}')">Download</button>
+//         `;
+//         videoListContainer.appendChild(videoItem);
+//     });
+
+//     // Load the first video by default
+//     loadVideo(0);
+// }
+
+// fetchCourseData();
+
+// function loadVideo(index) {
+//     const videoPlayer = document.getElementById('video-player');
+//     const videoSource = document.getElementById('video-source');
+//     videoSource.src = videoList[index].url;
+//     videoPlayer.load();
+//     videoPlayer.play();
+//     document.getElementById('video-display').style.display = 'block';
+// }
+
+// function startVideo(index) {
+//     loadVideo(index);
+//     const videoPlayer = document.getElementById('video-player');
+//     videoPlayer.onended = function () {
+//         completeVideo(index);
+//     };
+// }
+
+// window.stopVideo = function () {
+//     const videoPlayer = document.getElementById('video-player');
+//     videoPlayer.pause();
+// };
+
+// function downloadVideo(url) {
+//     const link = document.createElement('a');
+//     link.href = url;
+//     link.download = url.split('/').pop();
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+// }
+
+// async function completeVideo(index) {
+//     if (completedVideos < totalVideos) {
+//         completedVideos++;
+//         updateProgress();
+//         document.querySelectorAll('.btn-success')[index].disabled = true;
+
+//         // Save progress to Firebase
+//         const progressRef = ref(database, `users/${userId}/progress/${courseId}`);
+//         await set(progressRef, { completedVideos, totalVideos });
+//     }
+// }
+
+// function updateProgress() {
+//     const progressBar = document.getElementById('progress-bar');
+//     const progressText = document.getElementById('progress-text');
+//     const progressPercentage = (completedVideos / totalVideos) * 100;
+
+//     progressBar.value = progressPercentage;
+//     progressText.textContent = `Progress: ${Math.round(progressPercentage)}%`;
+
+//     // Enable certificate generation if all videos are completed
+//     if (completedVideos === totalVideos) {
+//         document.getElementById('generate-certificate').disabled = false;
+//     }
+// }
+
+// async function generateCertificate() {
+//     const courseTitle = document.getElementById('course-title').textContent;
+
+//     try {
+//         const userCertsRef = ref(database, `users/${userId}/certificates`);
+//         const certSnapshot = await get(userCertsRef);
+//         const existingCerts = certSnapshot.val() || [];
+
+//         const certExists = existingCerts.some(cert => cert.courseTitle === courseTitle);
+
+//         if (certExists) {
+//             Swal.fire({
+//                 icon: 'info',
+//                 title: 'Already Generated',
+//                 text: `You have already generated a certificate for ${courseTitle}.`,
+//                 confirmButtonText: 'OK',
+//                 showCloseButton: true
+//             });
+//             return;
+//         }
+
+//         const certificateData = {
+//             courseTitle: courseTitle,
+//             generatedOn: new Date().toISOString(),
+//         };
+
+//         existingCerts.push(certificateData);
+//         await set(userCertsRef, existingCerts);
+
+//         Swal.fire({
+//             icon: 'success',
+//             title: 'Certificate Generated!',
+//             text: `Your certificate for ${courseTitle} has been generated.`,
+//             confirmButtonText: 'OK',
+//             showCloseButton: true
+//         }).then(() => {
+//             // Redirect to certificate.html
+//             window.location.href = `certificate.html?course=${encodeURIComponent(courseTitle)}`;
+//         });
+
+//     } catch (error) {
+//         console.error("Error generating certificate:", error);
+//         Swal.fire({
+//             icon: 'error',
+//             title: 'Error',
+//             text: 'There was an error generating the certificate. Please try again later.',
+//             confirmButtonText: 'OK',
+//             showCloseButton: true
+//         });
+//     }
+// }
+
+// window.generateCertificate = generateCertificate;
+// // document.addEventListener('DOMContentLoaded', function () {
+// //     let totalVideos = 10;
+// //     let completedVideos = 0;
+// //     const progressBar = document.querySelector('progress');
+// //     const generateCertificateBtn = document.getElementById('generate-certificate');
+// //     const videoItems = document.querySelectorAll('.video-item');
+// //     const videoDisplay = document.getElementById('video-display'); // Video display div
+
+// //     // Update the global progress bar
+// //     function updateProgressBar() {
+// //         let progress = (completedVideos / totalVideos) * 100;
+// //         progressBar.value = progress;
+
+// //         // Enable the certificate button when 100% progress is reached
+// //         if (progress === 100) {
+// //             generateCertificateBtn.disabled = false;
+// //         }
+// //     }
+
+// //     // Mark a video as completed
+// //     function markVideoAsCompleted(videoIndex) {
+// //         completedVideos++;
+// //         videoItems[videoIndex].classList.add('active');
+// //         videoItems[videoIndex].querySelector('.btn-success').textContent = 'Completed';
+// //         videoItems[videoIndex].querySelector('.btn-success').disabled = true; // Disable the Complete button
+// //         updateProgressBar();
+// //     }
+
+// //     // Add event listeners to each video
+// //     videoItems.forEach((item, index) => {
+// //         const videoUrl = item.querySelector('.video-url a');
+
+// //         // When the video URL is clicked, display the video in the video display div
+// //         videoUrl.addEventListener('click', function (event) {
+// //             event.preventDefault(); // Prevent default link behavior
+// //             videoDisplay.style.display = 'block'; // Show the video display div
+// //             videoDisplay.innerHTML = `<iframe width="100%" height="100%" src="https://www.example.com/video${index+1}" frameborder="0" allowfullscreen></iframe>`;
+// //         });
+
+// //         // Complete button click
+// //         item.querySelector('.btn-success').addEventListener('click', function () {
+// //             markVideoAsCompleted(index);
+// //         });
+
+// //         // Watch Later button click
+// //         item.querySelector('.btn-secondary').addEventListener('click', function () {
+// //             alert(`You chose to watch Video ${index+1} later.`);
+// //         });
+// //     });
+
+// //     // Enable Certificate generation after all videos are completed
+// //     generateCertificateBtn.addEventListener('click', function () {
+// //         alert('Certificate Generated!');
+// //     });
+// // });
+
+
+
+
+
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
-import { get} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
-// const free= [
-//       {
-//           "id": 1,
-//           "title": "HTML Course",
-//           "description": "Learn the basics of HTML.",
-//           "price": 29.99,
-//           "image": "https://www.w3.org/html/logo/downloads/HTML5_Badge_512.png",
-//           "video_links": [
-//               "https://www.youtube.com/watch?v=UB1O30fR-EE",
-//               "https://www.youtube.com/watch?v=pQN-pnXPaVg",
-//               "https://www.youtube.com/watch?v=DPnqb74Smug",
-//               "https://www.youtube.com/watch?v=G3e-cpL7ofc",
-//               "https://www.youtube.com/watch?v=88PXJAA6szs",
-//               "https://www.youtube.com/watch?v=qz0aGYrrlhU",
-//               "https://www.youtube.com/watch?v=kUMe1FH4CHE",
-//               "https://www.youtube.com/watch?v=oxjJ6cMrD1c",
-//               "https://www.youtube.com/watch?v=3LgJpkx-hz0",
-//               "https://www.youtube.com/watch?v=nwa1aZlTzcg"
-//           ]
-//       },
-//       {
-//           "id": 2,
-//           "title": "CSS Course",
-//           "description": "Learn how to style websites using CSS.",
-//           "price": 29.99,
-//           "image": "https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg",
-//           "video_links": [
-//               "https://www.youtube.com/watch?v=yfoY53QXEnI",
-//               "https://www.youtube.com/watch?v=1Rs2ND1ryYc",
-//               "https://www.youtube.com/watch?v=HcOc7P5BMi4",
-//               "https://www.youtube.com/watch?v=s7ONvIgOWdM",
-//               "https://www.youtube.com/watch?v=3T_Jy1CqH9U",
-//               "https://www.youtube.com/watch?v=ieTHC78giGQ",
-//               "https://www.youtube.com/watch?v=0afZj1G0BIE",
-//               "https://www.youtube.com/watch?v=lOeQUwdAjE0",
-//               "https://www.youtube.com/watch?v=Edsxf_NBFrw",
-//               "https://www.youtube.com/watch?v=uBXTQx5CtRA"
-//           ]
-//       },
-//       {
-//           "id": 3,
-//           "title": "Web Development Bootcamp",
-//           "description": "Learn to build websites using HTML, CSS, and JavaScript.",
-//           "price": 49.99,
-//           "image": "https://tse2.mm.bing.net/th?id=OIP.Voyv5GlFcNUErkDbtTDv-gHaDt&pid=Api&P=0&h=180",
-//           "video_links": [
-//               "https://www.youtube.com/watch?v=jBzwzrDvZ18",
-//               "https://www.youtube.com/watch?v=3JluqTojuME",
-//               "https://www.youtube.com/watch?v=PkZNo7MFNFg",
-//               "https://www.youtube.com/watch?v=UB1O30fR-EE",
-//               "https://www.youtube.com/watch?v=yfoY53QXEnI",
-//               "https://www.youtube.com/watch?v=w7ejDZ8SWv8",
-//               "https://www.youtube.com/watch?v=sBws8MSXN7A",
-//               "https://www.youtube.com/watch?v=4UZrsTqkcW4",
-//               "https://www.youtube.com/watch?v=3tCm-l2A8gE",
-//               "https://www.youtube.com/watch?v=rfscVS0vtbw"
-//           ]
-//       },
-//       {
-//           "id": 4,
-//           "title": "C++",
-//           "description": "Learn the C++ programming language.",
-//           "price": 34.99,
-//           "image": "https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg",
-//           "video_links": [
-//               "https://www.youtube.com/watch?v=vLnPwxZdW4Y",
-//               "https://www.youtube.com/watch?v=Rub-JsjMhWY",
-//               "https://www.youtube.com/watch?v=1v_4dL9uX7A",
-//               "https://www.youtube.com/watch?v=mUQZ1qmKlLY",
-//               "https://www.youtube.com/watch?v=yGB9jhsEsr8",
-//               "https://www.youtube.com/watch?v=4bYgqGuLfD4",
-//               "https://www.youtube.com/watch?v=bzQ0LgaFL_4",
-//               "https://www.youtube.com/watch?v=fogqSOcZQkI",
-//               "https://www.youtube.com/watch?v=ztHM_o4NO-Q",
-//               "https://www.youtube.com/watch?v=o4LsdN8KXO0"
-//           ]
-//       },
-//               {
-//                   "id": 5,
-//                   "title": "Python Course",
-//                   "description": "Learn Python programming from basic to advanced.",
-//                   "price": 34.99,
-//                   "image": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg",
-//                   "video_links": [
-//                       "https://www.youtube.com/watch?v=rfscVS0vtbw",
-//                       "https://www.youtube.com/watch?v=H1elmMBnykA",
-//                       "https://www.youtube.com/watch?v=VAcKlsfM3Kk",
-//                       "https://www.youtube.com/watch?v=YYXdXT2l-Gg",
-//                       "https://www.youtube.com/watch?v=5f44B9NNZ9w",
-//                       "https://www.youtube.com/watch?v=0d5lApCbb4A",
-//                       "https://www.youtube.com/watch?v=AnDmw6F7tYo",
-//                       "https://www.youtube.com/watch?v=V60u5JtXlDw",
-//                       "https://www.youtube.com/watch?v=KB9kVhOVNKo",
-//                       "https://www.youtube.com/watch?v=J7dO2NKPj7I"
-//                   ]
-//               },
-//               {
-//                   "id": 10,
-//                   "title": "Azure Course",
-//                   "description": "Learn Microsoft Azure cloud services.",
-//                   "price": 44.99,
-//                   "image": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Microsoft_Azure_Logo.svg",
-//                   "video_links": [
-//                       "https://www.youtube.com/watch?v=22zZXp6JfB4",
-//                       "https://www.youtube.com/watch?v=aFkmfcmN6Mw",
-//                       "https://www.youtube.com/watch?v=U3X8s_YR9E4",
-//                       "https://www.youtube.com/watch?v=3ybsuQftIh0",
-//                       "https://www.youtube.com/watch?v=msJ9dH5PTb8",
-//                       "https://www.youtube.com/watch?v=8m02mUq6ZT4",
-//                       "https://www.youtube.com/watch?v=1JmGTzj8nmE",
-//                       "https://www.youtube.com/watch?v=2fAq7xsL9n0",
-//                       "https://www.youtube.com/watch?v=j5p1qgI-SyM",
-//                       "https://www.youtube.com/watch?v=ZKzgLw3Zl5o"
-//                   ]
-//               },
-//               {
-//                   "id": 6,
-//                   "title": "C# Course",
-//                   "description": "Learn C# programming from beginner to advanced.",
-//                   "price": 39.99,
-//                   "image": "https://tse2.mm.bing.net/th?id=OIP.TlyeYC31BoaaRXgdAbNcqAHaEo&pid=Api&P=0&h=180",
-//                   "video_links": [
-//                       "https://www.youtube.com/watch?v=GhQdlIFylQ8",
-//                       "https://www.youtube.com/watch?v=0paVJ27fF4o",
-//                       "https://www.youtube.com/watch?v=2oTSGs6XvsQ",
-//                       "https://www.youtube.com/watch?v=CYc9VlaeMG8",
-//                       "https://www.youtube.com/watch?v=8kXkpcCpHmM",
-//                       "https://www.youtube.com/watch?v=GFfhvOdaBaE",
-//                       "https://www.youtube.com/watch?v=vINi3dLMaj8",
-//                       "https://www.youtube.com/watch?v=d5Tmcz5U7YA",
-//                       "https://www.youtube.com/watch?v=-vMtbHT6oQY",
-//                       "https://www.youtube.com/watch?v=FHHrZ-rgFJs"
-//                   ]
-//               },
-//               {
-//                   "id": 7,
-//                   "title": "PHP Course",
-//                   "description": "Learn PHP for web development.",
-//                   "price": 34.99,
-//                   "image": "https://upload.wikimedia.org/wikipedia/commons/2/27/PHP-logo.svg",
-//                   "video_links": [
-//                       "https://www.youtube.com/watch?v=OK_JCtrrv-c",
-//                       "https://www.youtube.com/watch?v=7TLfD0rRjK4",
-//                       "https://www.youtube.com/watch?v=0LwntkD9gO0",
-//                       "https://www.youtube.com/watch?v=2pMxV6GxfEc",
-//                       "https://www.youtube.com/watch?v=e3Fiqfzxb58",
-//                       "https://www.youtube.com/watch?v=GTV-cI3bYlM",
-//                       "https://www.youtube.com/watch?v=le1bFrwL91w",
-//                       "https://www.youtube.com/watch?v=XN2umBG8r_A",
-//                       "https://www.youtube.com/watch?v=5e5BRhmgwnY",
-//                       "https://www.youtube.com/watch?v=a5j-2lVr6FY"
-//                   ]
-//               }
-      
-//   ]
+import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
-// const premium=[
-//     {
-//         "id": 1,
-//         "title": "React Course",
-//         "description": "Learn to build user interfaces with React.",
-//         "price": 39.99,
-//         "image": "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg",
-//         "video_links": [
-//             "https://www.youtube.com/watch?v=Ke90Tje7VS0",
-//             "https://www.youtube.com/watch?v=w7ejDZ8SWv8",
-//             "https://www.youtube.com/watch?v=bMknfKXIFA8",
-//             "https://www.youtube.com/watch?v=4UZrsTqkcW4",
-//             "https://www.youtube.com/watch?v=QFaFIcGhPoM",
-//             "https://www.youtube.com/watch?v=SqcY0GlETPk",
-//             "https://www.youtube.com/watch?v=nTeuhbP7wdE",
-//             "https://www.youtube.com/watch?v=mnqNAF3c8AE",
-//             "https://www.youtube.com/watch?v=99WjItEQlB8",
-//             "https://www.youtube.com/watch?v=f55qeKGgB_M"
-//         ]
-//     },
-//     {
-//         "id": 2,
-//         "title": "SQL Course",
-//         "description": "Learn to manage databases using SQL.",
-//         "price": 34.99,
-//         "image": "https://upload.wikimedia.org/wikipedia/commons/8/87/Sql_data_base_with_logo.png",
-//         "video_links": [
-//             "https://www.youtube.com/watch?v=HXV3zeQKqGY",
-//             "https://www.youtube.com/watch?v=7S_tz1z_5bA",
-//             "https://www.youtube.com/watch?v=6ddjP1Twjho",
-//             "https://www.youtube.com/watch?v=9HIdZhxuGyw",
-//             "https://www.youtube.com/watch?v=guCyB9TmL38",
-//             "https://www.youtube.com/watch?v=9PJWHg5kDdQ",
-//             "https://www.youtube.com/watch?v=T0zSGcZu6vA",
-//             "https://www.youtube.com/watch?v=OOjV7QwDd1Q",
-//             "https://www.youtube.com/watch?v=ktvUTjTBJbs",
-//             "https://www.youtube.com/watch?v=9ytT2_xHpxI"
-//         ]
-//     },
-//     {
-//         "id": 3,
-//         "title": "Java Course",
-//         "description": "Learn Java programming from basics to advanced.",
-//         "price": 39.99,
-//         "image": "https://static.vecteezy.com/system/resources/previews/022/100/686/original/java-logo-transparent-free-png.png",
-//         "video_links": [
-//             "https://www.youtube.com/watch?v=grEKMHGY9YY",
-//             "https://www.youtube.com/watch?v=GoXwIVyNvX0",
-//             "https://www.youtube.com/watch?v=8cm1x4bC610",
-//             "https://www.youtube.com/watch?v=kz9vH7XBdpE",
-//             "https://www.youtube.com/watch?v=TBwx9fyqf9I",
-//             "https://www.youtube.com/watch?v=xk4zADywHjY",
-//             "https://www.youtube.com/watch?v=R-MYY9I1hzc",
-//             "https://www.youtube.com/watch?v=s9wW2Pp6wY8",
-//             "https://www.youtube.com/watch?v=grEKMHGY9YY",
-//             "https://www.youtube.com/watch?v=p8LRv1D7h8M"
-//         ]
-//     },
-//     {
-//         "id": 4,
-//         "title": "AWS Course",
-//         "description": "Learn Amazon Web Services (AWS) for cloud computing.",
-//         "price": 49.99,
-//         "image": "https://kemsys.com/wp-content/uploads/2021/07/AWS-IoT-Connecting-enterprise-devices-Digitalization-Kemsys.png",
-//         "video_links": [
-//             "https://www.youtube.com/watch?v=Ia-UEYYR44s",
-//             "https://www.youtube.com/watch?v=3hBmIu4iydY",
-//             "https://www.youtube.com/watch?v=AnYf0V1-ByA",
-//             "https://www.youtube.com/watch?v=AiX9w5kUE-8",
-//             "https://www.youtube.com/watch?v=dTF4XHJSI4w",
-//             "https://www.youtube.com/watch?v=v_7bTBRq6A0",
-//             "https://www.youtube.com/watch?v=J3gIu96q03k",
-//             "https://www.youtube.com/watch?v=2RuB2j8WVeI",
-//             "https://www.youtube.com/watch?v=Jrbge5HnJYo",
-//             "https://www.youtube.com/watch?v=sxxFg9fbQHc"
-//         ]
-//     },
-//     {
-//         "id": 5,
-//         "title": "Node.js Course",
-//         "description": "Learn to build web applications with Node.js.",
-//         "price": 34.99,
-//         "image": "https://tse2.mm.bing.net/th?id=OIP.cmrREkftpZTXsL5L_8N-2QHaD9&pid=Api&P=0&h=180",
-//         "video_links": [
-//             "https://www.youtube.com/watch?v=RLpIq3dlOb4",
-//             "https://www.youtube.com/watch?v=TlB_eWDSMt4",
-//             "https://www.youtube.com/watch?v=O1Ro5GVc-O8",
-//             "https://www.youtube.com/watch?v=nKIu9K6F6uA",
-//             "https://www.youtube.com/watch?v=8z7dXQ_7Lxg",
-//             "https://www.youtube.com/watch?v=10SMcxbr3Qo",
-//             "https://www.youtube.com/watch?v=RZSOwJoGQDQ",
-//             "https://www.youtube.com/watch?v=1VZIEfbC_5k",
-//             "https://www.youtube.com/watch?v=nA1tbzIvi1s",
-//             "https://www.youtube.com/watch?v=02QOMR49dh0"
-//         ]
-//     },
-//     {
-//         "id": 6,
-//         "title": "Angular Course",
-//         "description": "Learn Angular framework for building dynamic web applications.",
-//         "price": 49.99,
-//         "image": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg",
-//         "video_links": [
-//             "https://www.youtube.com/watch?v=htPYk6QxacQ",
-//             "https://www.youtube.com/watch?v=3qBXWUpoPHo",
-//             "https://www.youtube.com/watch?v=htH7KGRN9V4",
-//             "https://www.youtube.com/watch?v=x0V-V9avco8",
-//             "https://www.youtube.com/watch?v=GgVHTY64ke0",
-//             "https://www.youtube.com/watch?v=ZmP7J5itvYg",
-//             "https://www.youtube.com/watch?v=KzQI3VEXZJw",
-//             "https://www.youtube.com/watch?v=1PkcM1zGc9g",
-//             "https://www.youtube.com/watch?v=0LqqQYs7bt0",
-//             "https://www.youtube.com/watch?v=Fd5jL8fFE5k"
-//         ]
-//     },
-// ]
-
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB5iAUnK_5AP7ijrcQvlRfvCSfXrH9n6Ak",
   authDomain: "index-16f53.firebaseapp.com",
@@ -290,116 +256,177 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-document.addEventListener('DOMContentLoaded', function () {
-    let totalVideos = 10;
-    let completedVideos = 0;
-    const progressBar = document.querySelector('progress');
-    const generateCertificateBtn = document.getElementById('generate-certificate');
-    const videoItems = document.querySelectorAll('.video-item');
-    const videoDisplay = document.getElementById('video-display'); // Video display div
+let userId = localStorage.getItem('userid');
+if (!userId) {
+    console.error('User ID not found in localStorage.');
+    window.location.href = "login.html";
+    throw new Error("User ID is required.");
+}
 
-    // Update the global progress bar
-    function updateProgressBar() {
-        let progress = (completedVideos / totalVideos) * 100;
-        progressBar.value = progress;
+const courseId = localStorage.getItem('courseId'); // e.g., "course1"
+let courseCategory = localStorage.getItem('courseCategory'); // e.g., "DataScience"
 
-        // Enable the certificate button when 100% progress is reached
-        if (progress === 100) {
-            generateCertificateBtn.disabled = false;
-        }
+let completedVideos = 0;
+let totalVideos = 0;
+let videoList = [];
+
+// Fetch course data from Firebase
+async function fetchCourseData() {
+    // Retrieve courseId and courseCategory from local storage
+    const courseId = localStorage.getItem('courseId');
+    const courseCategory = localStorage.getItem('courseCategory');
+
+    if (!courseId || !courseCategory) {
+        console.error('Course ID or Category not found in localStorage.');
+        return;
     }
 
-    // Mark a video as completed
-    function markVideoAsCompleted(videoIndex) {
+    // Fetch the course data using the courseCategory and courseId
+    const courseRef = ref(database, `admin/courses/${courseCategory}/${courseId}`);
+    const snapshot = await get(courseRef);
+    const courseData = snapshot.val();
+
+    if (!courseData) {
+        console.error('Course data not found.');
+        return;
+    }
+
+    // Update the course title in the UI
+    document.getElementById('course-title').textContent = courseData.title;
+
+    // Populate the video list
+    videoList = courseData.video;
+    totalVideos = videoList.length;
+
+    const videoListContainer = document.querySelector('.video-list');
+    videoListContainer.innerHTML = ''; // Clear any existing video items
+
+    videoList.forEach((video, index) => {
+        const videoItem = document.createElement('div');
+        videoItem.className = 'video-item';
+        videoItem.innerHTML = `
+            <p>${video.title}</p>
+            <button class="btn-success" onclick="startVideo(${index})">Start</button>
+            <button class="btn-download" onclick="downloadVideo('${video.url}')">Download</button>
+        `;
+        videoListContainer.appendChild(videoItem);
+    });
+
+    // Load the first video by default
+    loadVideo(0);
+}
+
+fetchCourseData();
+
+fetchCourseData();
+
+function loadVideo(index) {
+    const videoPlayer = document.getElementById('video-player');
+    const videoSource = document.getElementById('video-source');
+    videoSource.src = videoList[index].url;
+    videoPlayer.load();
+    videoPlayer.play();
+    document.getElementById('video-display').style.display = 'block';
+}
+
+function startVideo(index) {
+    loadVideo(index);
+    const videoPlayer = document.getElementById('video-player');
+    videoPlayer.onended = function () {
+        completeVideo(index);
+    };
+}
+
+window.stopVideo = function () {
+    const videoPlayer = document.getElementById('video-player');
+    videoPlayer.pause();
+};
+
+function downloadVideo(url) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+async function completeVideo(index) {
+    if (completedVideos < totalVideos) {
         completedVideos++;
-        videoItems[videoIndex].classList.add('active');
-        videoItems[videoIndex].querySelector('.btn-success').textContent = 'Completed';
-        videoItems[videoIndex].querySelector('.btn-success').disabled = true; // Disable the Complete button
-        updateProgressBar();
+        updateProgress();
+        document.querySelectorAll('.btn-success')[index].disabled = true;
+
+        // Save progress to Firebase
+        const progressRef = ref(database, `users/${userId}/progress/${courseId}`);
+        await set(progressRef, { completedVideos, totalVideos });
     }
+}
 
-    // Add event listeners to each video
-    videoItems.forEach((item, index) => {
-        const videoUrl = item.querySelector('.video-url a');
+function updateProgress() {
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const progressPercentage = (completedVideos / totalVideos) * 100;
 
-        // When the video URL is clicked, fetch the href and display the video in the video display div
-        videoUrl.addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent default link behavior
+    progressBar.value = progressPercentage;
+    progressText.textContent = `Progress: ${Math.round(progressPercentage)}%`;
 
-            const videoSrc = videoUrl.getAttribute('href'); // Fetch the video URL from the 'href' attribute
-            videoDisplay.style.display = 'block'; // Show the video display div
-            videoDisplay.innerHTML = `<iframe width="100%" height="100%" src="${videoSrc}" frameborder="0" allowfullscreen></iframe>`;
+    // Enable certificate generation if all videos are completed
+    if (completedVideos === totalVideos) {
+        document.getElementById('generate-certificate').disabled = false;
+    }
+}
+
+async function generateCertificate() {
+    const courseTitle = document.getElementById('course-title').textContent;
+
+    try {
+        const userCertsRef = ref(database, `users/${userId}/certificates`);
+        const certSnapshot = await get(userCertsRef);
+        const existingCerts = certSnapshot.val() || [];
+
+        const certExists = existingCerts.some(cert => cert.courseTitle === courseTitle);
+
+        if (certExists) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Already Generated',
+                text: `You have already generated a certificate for ${courseTitle}.`,
+                confirmButtonText: 'OK',
+                showCloseButton: true
+            });
+            return;
+        }
+
+        const certificateData = {
+            courseTitle: courseTitle,
+            generatedOn: new Date().toISOString(),
+        };
+
+        existingCerts.push(certificateData);
+        await set(userCertsRef, existingCerts);
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Certificate Generated!',
+            text: `Your certificate for ${courseTitle} has been generated.`,
+            confirmButtonText: 'OK',
+            showCloseButton: true
+        }).then(() => {
+            // Redirect to certificate.html
+            window.location.href = `certificate.html?course=${encodeURIComponent(courseTitle)}`;
         });
 
-        // Complete button click
-        item.querySelector('.btn-success').addEventListener('click', function () {
-            markVideoAsCompleted(index);
+    } catch (error) {
+        console.error("Error generating certificate:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'There was an error generating the certificate. Please try again later.',
+            confirmButtonText: 'OK',
+            showCloseButton: true
         });
+    }
+}
 
-        // Watch Later button click
-        item.querySelector('.btn-secondary').addEventListener('click', function () {
-            alert(`You chose to watch Video ${index+1} later.`);
-        });
-    });
-
-    // Enable Certificate generation after all videos are completed
-    generateCertificateBtn.addEventListener('click', function () {
-        alert('Certificate Generated!');
-    });
-});
-
-// document.addEventListener('DOMContentLoaded', function () {
-//     let totalVideos = 10;
-//     let completedVideos = 0;
-//     const progressBar = document.querySelector('progress');
-//     const generateCertificateBtn = document.getElementById('generate-certificate');
-//     const videoItems = document.querySelectorAll('.video-item');
-//     const videoDisplay = document.getElementById('video-display'); // Video display div
-
-//     // Update the global progress bar
-//     function updateProgressBar() {
-//         let progress = (completedVideos / totalVideos) * 100;
-//         progressBar.value = progress;
-
-//         // Enable the certificate button when 100% progress is reached
-//         if (progress === 100) {
-//             generateCertificateBtn.disabled = false;
-//         }
-//     }
-
-//     // Mark a video as completed
-//     function markVideoAsCompleted(videoIndex) {
-//         completedVideos++;
-//         videoItems[videoIndex].classList.add('active');
-//         videoItems[videoIndex].querySelector('.btn-success').textContent = 'Completed';
-//         videoItems[videoIndex].querySelector('.btn-success').disabled = true; // Disable the Complete button
-//         updateProgressBar();
-//     }
-
-//     // Add event listeners to each video
-//     videoItems.forEach((item, index) => {
-//         const videoUrl = item.querySelector('.video-url a');
-
-//         // When the video URL is clicked, display the video in the video display div
-//         videoUrl.addEventListener('click', function (event) {
-//             event.preventDefault(); // Prevent default link behavior
-//             videoDisplay.style.display = 'block'; // Show the video display div
-//             videoDisplay.innerHTML = `<iframe width="100%" height="100%" src="https://www.example.com/video${index+1}" frameborder="0" allowfullscreen></iframe>`;
-//         });
-
-//         // Complete button click
-//         item.querySelector('.btn-success').addEventListener('click', function () {
-//             markVideoAsCompleted(index);
-//         });
-
-//         // Watch Later button click
-//         item.querySelector('.btn-secondary').addEventListener('click', function () {
-//             alert(`You chose to watch Video ${index+1} later.`);
-//         });
-//     });
-
-//     // Enable Certificate generation after all videos are completed
-//     generateCertificateBtn.addEventListener('click', function () {
-//         alert('Certificate Generated!');
-//     });
-// });
+window.generateCertificate = generateCertificate;
