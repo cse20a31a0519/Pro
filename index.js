@@ -399,8 +399,8 @@ if (btns) {
       if (userSnapshot.exists()) {
         // User data exists in database, welcome back!
         const userData = userSnapshot.val(); // Get user data from the snapshot
-       
-        localStorage.setItem('userdata', userData);
+        localStorage.setItem('username', userData.username); // Store username in local storage
+        localStorage.setItem('userid', userData);
 
         // Clear input fields
         document.getElementById("loginEmail").value = "";

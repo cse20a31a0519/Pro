@@ -11,32 +11,10 @@ const firebaseConfig = {
     messagingSenderId: "171804052014",
     appId: "1:171804052014:web:c38d9d50835d551cafadbf"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
-
-// Get user ID from local storage
-let userId = localStorage.getItem('userid');
-if (!userId) {
-    console.error('User ID not found in localStorage.');
-    window.location.href = "login.html";
-    throw new Error("User ID is required.");
-}
-
-// Firebase Auth State Listener
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        const userId = user.uid;
-        fetchCourses().then((courses) => {
-            displayCourses(courses, userId);
-        });
-    } else {
-        window.location.href = "login.html"; // Redirect to login page if user is not signed in
-    }
-});
-
 // Fetch courses from the database
 const fetchCourses = async (selectedCategory = null) => {
     try {
@@ -64,44 +42,78 @@ const fetchCourses = async (selectedCategory = null) => {
         return [];
     }
 };
-let itButton = document.getElementById("it");
-let aiButton = document.getElementById("dg");
-let dsButton = document.getElementById("ds");
-let coursesContainer = document.querySelector(".container");
-
-itButton.addEventListener("click", () => {
-    console.log("Fetching and displaying IT courses...");
-    fetchCourses("It").then(courses => {
-        coursesContainer.style.display = "block";
-        console.log("IT Courses Data:", courses);
-        displayCourses(courses, userId, "It");
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        const userId = user.uid; // Ensure userId is a string
+        localStorage.setItem('userid', userId); // Store userId in localStorage
+        fetchCourses().then((courses) => {
+            displayCourses(courses, userId);
+            let itButton = document.getElementById("it");
+    let aiButton = document.getElementById("dg");
+    let dsButton = document.getElementById("ds");
+    let coursesContainer = document.querySelector(".container");
+    
+    itButton.addEventListener("click", () => {
+        console.log("Fetching and displaying IT courses...");
+        fetchCourses("It").then(courses => {
+            coursesContainer.style.display = "block";
+            console.log("IT Courses Data:", courses);
+            displayCourses(courses, userId, "It");
+        });
     });
-});
-
-aiButton.addEventListener("click", () => {
-    console.log("Fetching and displaying AI courses...");
-    fetchCourses("Designing").then(courses => {
-        coursesContainer.style.display = "block";
-        console.log("AI Courses Data:", courses);
-        displayCourses(courses, userId, "AI");
+    
+    aiButton.addEventListener("click", () => {
+        console.log("Fetching and displaying AI courses...");
+        fetchCourses("Designing").then(courses => {
+            coursesContainer.style.display = "block";
+            console.log("AI Courses Data:", courses);
+            displayCourses(courses, userId, "AI");
+        });
     });
-});
-
-dsButton.addEventListener("click", () => {
-    console.log("Fetching and displaying Data Science courses...");
-    fetchCourses("DataScience").then(courses => {
-        coursesContainer.style.display = "block";
-        console.log("Data Science Courses Data:", courses);
-        displayCourses(courses, userId, "DataScience");
+    
+    dsButton.addEventListener("click", () => {
+        console.log("Fetching and displaying Data Science courses...");
+        fetchCourses("DataScience").then(courses => {
+            coursesContainer.style.display = "block";
+            console.log("Data Science Courses Data:", courses);
+            displayCourses(courses, userId, "DataScience");
+        });
     });
-});
+        });
+    
 
-const displayCourses = (courses, categoryName) => {
+// const fetchCourses = async (selectedCategory = null) => {
+//     try {
+//         const coursesSnapshot = await get(ref(database, "admin/courses"));
+//         if (!coursesSnapshot.exists()) return [];
+
+//         const coursesData = coursesSnapshot.val();
+//         const allCourses = [];
+
+//         // Loop through categories
+//         Object.keys(coursesData).forEach((category) => {
+//             if (!selectedCategory || selectedCategory === category) {
+//                 const categoryCourses = coursesData[category];
+//                 Object.values(categoryCourses).forEach((course) => {
+//                     allCourses.push({ ...course, type: course.type || "free", category });
+//                 });
+//             }
+//         });
+
+//         console.log("Courses retrieved successfully:", allCourses);
+//         return allCourses;
+//     } catch (error) {
+//         console.error("Error fetching courses:", error);
+//         return [];
+//     }
+// };
+
+const displayCourses = (courses, userId) => {
     const coursesContainer = document.getElementById("courses-container");
     coursesContainer.innerHTML = "";
 
     if (courses.length === 0) {
-        coursesContainer.innerHTML = `<p>No courses available for ${categoryName} category.</p>`;
+        coursesContainer.innerHTML = `<p>No courses available.</p>`;
         return;
     }
 
@@ -115,7 +127,6 @@ const displayCourses = (courses, categoryName) => {
         }
 
         const isPremium = course.type === "premium";
-        const courseId = course.id;
 
         courseElement.innerHTML = `
             <div class="card h-100">
@@ -127,8 +138,8 @@ const displayCourses = (courses, categoryName) => {
                     <p class="card-text">Description: ${course.description}</p>
                     <p class="card-price">Price: ${course.price || (isPremium ? 'Contact for Price' : 'Free')}</p>
                     <div class="btn-container">
-                        <button class="btn btn-secondary mt-2 play-all" data-course-id="${courseId}">Play All</button>
-                        <button class="btn btn-primary enroll ${isPremium ? 'premium-enroll' : ''}" data-course-id="${courseId}" style="${isPremium ? 'background-color: orange; border-color: orange;' : ''}">
+                        <button class="btn btn-secondary mt-2 play-all" data-course-title="${course.title}">Play All</button>
+                        <button class="btn btn-primary enroll ${isPremium ? 'premium-enroll' : ''}" data-course-title="${course.title}" style="${isPremium ? 'background-color: orange; border-color: orange;' : ''}">
                             ${isPremium ? 'Enroll (Premium)' : 'Enroll'}
                         </button>
                     </div>
@@ -139,11 +150,11 @@ const displayCourses = (courses, categoryName) => {
         coursesContainer.appendChild(courseElement);
     });
 
-   // Event listeners for play all buttons
-   document.querySelectorAll('.play-all').forEach(button => {
+    // Event listeners for play all buttons
+    document.querySelectorAll('.play-all').forEach(button => {
         button.addEventListener('click', async () => {
-            const courseId = Number(button.dataset.courseId);
-            const course = courses.find(c => c.id === courseId);
+            const courseTitle = button.dataset.courseTitle;
+            const course = courses.find(c => c.title === courseTitle);
 
             if (course) {
                 try {
@@ -153,10 +164,8 @@ const displayCourses = (courses, categoryName) => {
                         if (course.type === "premium") {
                             const isPaid = await checkPayment(course, userId);
                             if (isPaid) {
-                                // Navigate to the course if both enrolled and paid
-                                navigateToSingleCourse(course.id);
+                                navigateToSingleCourse(course.title);
                             } else {
-                                // Show SweetAlert if not paid for premium course
                                 Swal.fire({
                                     title: 'Info',
                                     text: 'Please complete the payment for this premium course.',
@@ -165,11 +174,9 @@ const displayCourses = (courses, categoryName) => {
                                 });
                             }
                         } else {
-                            // For free courses, navigate directly
-                            navigateToSingleCourse(course.id);
+                            navigateToSingleCourse(course.title);
                         }
                     } else {
-                        // Show SweetAlert if not enrolled
                         Swal.fire({
                             title: 'Info',
                             text: 'Please enroll in the course first.',
@@ -188,7 +195,7 @@ const displayCourses = (courses, categoryName) => {
                     });
                 }
             } else {
-                console.error("Course not found for ID:", courseId);
+                console.error("Course not found for title:", courseTitle);
                 Swal.fire('Error!', 'Course not found.', 'error');
             }
         });
@@ -197,21 +204,20 @@ const displayCourses = (courses, categoryName) => {
     // Event listeners for enroll buttons
     document.querySelectorAll('.enroll').forEach(button => {
         button.addEventListener('click', async () => {
-            const courseId = Number(button.dataset.courseId);
-            const course = courses.find(c => c.id === courseId);
+            const courseTitle = button.dataset.courseTitle;
+            const course = courses.find(c => c.title === courseTitle);
 
             if (course) {
-                await handleEnrollment(course);
+                await handleEnrollment(course, userId);
             } else {
-                console.error("Course not found for ID:", courseId);
+                console.error("Course not found for title:", courseTitle);
                 Swal.fire('Error!', 'Course not found.', 'error');
             }
         });
     });
 };
-
-const handleEnrollment = async (course) => {
-     if (!course || !course.type || !course.id) {
+const handleEnrollment = async (course, userId) => {
+    if (!course || !course.type || !course.title) {
         console.error("Course object is invalid:", course);
         Swal.fire('Error!', 'Invalid course data.', 'error');
         return;
@@ -230,7 +236,6 @@ const handleEnrollment = async (course) => {
         }
 
         if (course.type === "free") {
-            // Get user details for free enrollments as well
             const { value: userDetails } = await Swal.fire({
                 title: `Enroll in ${course.title} (Free)`,
                 html: `
@@ -262,17 +267,17 @@ const handleEnrollment = async (course) => {
                 }
             });
 
-            if (userDetails) {  // Proceed only if user confirmed and provided details
-                await enrollFreeCourse(course, userDetails); // Pass userDetails
+            if (userDetails) {
+                await enrollFreeCourse(course, userDetails, userId);
             }
             return;
         }
 
         if (course.type === "premium") {
-            await showPaymentModule(course);
+            await showPaymentModule(course, userId);
         }
     } catch (error) {
-       console.error("Error enrolling:", error);
+        console.error("Error enrolling:", error);
         Swal.fire({
             icon: 'error',
             title: 'Error!',
@@ -282,14 +287,13 @@ const handleEnrollment = async (course) => {
     }
 };
 
-const enrollFreeCourse = async (course, userDetails) => {
+const enrollFreeCourse = async (course, userDetails, userId) => {
     try {
         const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
         const snapshot = await get(userCoursesRef);
         let enrolledCourses = snapshot.val() || [];
 
-          // Check if the user is already enrolled in a free course
-        if (enrolledCourses.some(enrolledCourse => enrolledCourse.id === course.id)) {
+        if (enrolledCourses.some(enrolledCourse => enrolledCourse.title === course.title)) {
             await Swal.fire({
                 icon: 'info',
                 title: 'Already Enrolled',
@@ -300,7 +304,6 @@ const enrollFreeCourse = async (course, userDetails) => {
         }
 
         enrolledCourses.push({
-            id: course.id,
             title: course.title,
             category: course.category,
             type: course.type,
@@ -328,70 +331,94 @@ const enrollFreeCourse = async (course, userDetails) => {
         });
     }
 };
-
-
-const showPaymentModule = async (course) => {
+const checkEnrollment = async (course, userId) => {
     try {
-        const { value: userDetails } = await Swal.fire({
-            title: `Enroll in ${course.title}`,
-            html: `
-                <p>You are enrolling in: <strong>${course.title}</strong></p>
-                <input id="swal-input-name" class="swal2-input" placeholder="Your Name">
-                <input id="swal-input-email" class="swal2-input" placeholder="Email">
-                <input id="swal-input-phone" class="swal2-input" placeholder="Phone Number">
-                <label style="display: block; margin-top: 10px;">
-                    <input type="checkbox" id="swal-input-confirm" class="swal2-checkbox">
-                    I confirm that I want to enroll in this course.
-                </label>
-            `,
-            showCloseButton: true,
-            focusConfirm: false,
-            preConfirm: () => {
-                const name = document.getElementById('swal-input-name').value;
-                const email = document.getElementById('swal-input-email').value;
-                const phone = document.getElementById('swal-input-phone').value;
-                const isConfirmed = document.getElementById('swal-input-confirm').checked;
+        const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
+        const snapshot = await get(userCoursesRef);
+        const enrolledCourses = snapshot.val() || [];
 
-                if (!name || !email || !phone) {
-                    Swal.showValidationMessage(`Please enter all required details`);
-                    return false;
-                }
-
-                if (!isConfirmed) {
-                    Swal.showValidationMessage(`Please confirm your enrollment`);
-                    return false;
-                }
-
-                return { name, email, phone };
-            }
-        });
-          console.log("userDetails BEFORE payment:", userDetails);
-
-        if (userDetails) {
-            const paymentSuccess = await processPayment(course);
-            if (paymentSuccess) {
-                const paymentMethod = await selectPaymentMethod(course);
-
-                if (paymentMethod === 'upi') {
-                    await handleUPIPayment(course);
-                } else if (paymentMethod === 'creditCard') {
-                    await handleCreditCardPayment(course);
-                }
-
-                 console.log("userDetails before enrollPaidCourse:", userDetails);
-
-                await enrollPaidCourse(course, userDetails);
-            }
-        }
+        return enrolledCourses.some(enrolledCourse => enrolledCourse.title === course.title);
     } catch (error) {
-       console.error("Error during payment module:", error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'There was an issue with the payment process. Please try again later.',
-            confirmButtonText: 'OK'
-        });
+        return false; // Treat errors as not enrolled
     }
+};
+
+const checkPayment = async (course, userId) => {
+    try {
+        const userPaymentsRef = ref(database, `users/${userId}/payments`);
+        const snapshot = await get(userPaymentsRef);
+        const payments = snapshot.val() || [];
+
+        return payments.some(payment => payment.courseTitle === course.title);
+    } catch (error) {
+        return false; // Treat errors as not paid
+    }
+};
+const showPaymentModule = async (course) => {
+        try {
+            const { value: userDetails } = await Swal.fire({
+                title: `Enroll in ${course.title}`,
+                html: `
+                    <p>You are enrolling in: <strong>${course.title}</strong></p>
+                    <input id="swal-input-name" class="swal2-input" placeholder="Your Name">
+                    <input id="swal-input-email" class="swal2-input" placeholder="Email">
+                    <input id="swal-input-phone" class="swal2-input" placeholder="Phone Number">
+                    <label style="display: block; margin-top: 10px;">
+                        <input type="checkbox" id="swal-input-confirm" class="swal2-checkbox">
+                        I confirm that I want to enroll in this course.
+                    </label>
+                `,
+                showCloseButton: true,
+                focusConfirm: false,
+                preConfirm: () => {
+                    const name = document.getElementById('swal-input-name').value;
+                    const email = document.getElementById('swal-input-email').value;
+                    const phone = document.getElementById('swal-input-phone').value;
+                    const isConfirmed = document.getElementById('swal-input-confirm').checked;
+    
+                    if (!name || !email || !phone) {
+                        Swal.showValidationMessage(`Please enter all required details`);
+                        return false;
+                    }
+    
+                    if (!isConfirmed) {
+                        Swal.showValidationMessage(`Please confirm your enrollment`);
+                        return false;
+                    }
+    
+                    return { name, email, phone };
+                }
+            });
+              console.log("userDetails BEFORE payment:", userDetails);
+    
+            if (userDetails) {
+                const paymentSuccess = await processPayment(course);
+                if (paymentSuccess) {
+                    const paymentMethod = await selectPaymentMethod(course);
+    
+                    if (paymentMethod === 'upi') {
+                        await handleUPIPayment(course);
+                    } else if (paymentMethod === 'creditCard') {
+                        await handleCreditCardPayment(course);
+                    }
+    
+                     console.log("userDetails before enrollPaidCourse:", userDetails);
+    
+                    await enrollPaidCourse(course, userDetails);
+                }
+            }
+        } catch (error) {
+           console.error("Error during payment module:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'There was an issue with the payment process. Please try again later.',
+                confirmButtonText: 'OK'
+            });
+        }
+    };
+const navigateToSingleCourse = (courseTitle) => {
+    window.location.href = `single-course.html?title=${encodeURIComponent(courseTitle)}`;
 };
 
 const processPayment = async (course) => {
@@ -586,49 +613,328 @@ const enrollPaidCourse = async (course, userDetails) => {
         });
     }
 };
-
-const checkEnrollment = async (course, userId) => {
-    try {
-        const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
-        const snapshot = await get(userCoursesRef);
-        const enrolledCourses = snapshot.val() || [];
-
-        return enrolledCourses.some(enrolledCourse => enrolledCourse.id === course.id);
-    } catch (error) {
-        return false; // Treat errors as not enrolled
+    }else {
+        window.location.href = "login.html"; // Redirect to login page if user is not signed in
     }
-};
+});
+// const displayCourses = (courses, categoryName) => {
+//     const coursesContainer = document.getElementById("courses-container");
+//     coursesContainer.innerHTML = "";
 
-const checkPayment = async (course, userId) => {
-     try {
-        const userPaymentsRef = ref(database, `users/${userId}/payments`);
-        const snapshot = await get(userPaymentsRef);
-        const payments = snapshot.val() || [];
+//     if (courses.length === 0) {
+//         coursesContainer.innerHTML = `<p>No courses available for ${categoryName} category.</p>`;
+//         return;
+//     }
 
-        return payments.some(payment => payment.courseId === course.id);
-    } catch (error) {
-        return false; // Treat errors as not paid
-    }
-};
-function navigateToSingleCourse(courseId) {
-    window.location.href = `SingleCourse.html?id=${courseId}`;
-    localStorage.setItem('courseId', course.id);
-    localStorage.setItem('courseTitle', course.title);  // Store course title
-localStorage.setItem('courseCategory', course.category);
-}
+//     courses.forEach((course) => {
+//         const courseElement = document.createElement("div");
+//         courseElement.className = "col-md-4 mb-4 course-card";
 
-// Example navigate function (replace with your actual navigation logic)
-// const navigateToSingleCourse = (courseId) => {
-//      localStorage.setItem('courseId', courseId);
-//      window.location.href = `SingleCourse.html?id=${courseId}`;
+//         let imageUrl = course.image;
+//         if (imageUrl && imageUrl.startsWith("hhttps")) {
+//             imageUrl = imageUrl.replace("hhttps", "https");
+//         }
+
+//         const isPremium = course.type === "premium";
+//         const courseId = course.id;
+
+//         courseElement.innerHTML = `
+//             <div class="card h-100">
+//                 <div class="image-container">
+//                     <img src="${imageUrl}" class="card-img-top img-fluid course-image" alt="${course.title}">
+//                 </div>
+//                 <div class="card-body">
+//                     <h5 class="card-title">Title: ${course.title}</h5>
+//                     <p class="card-text">Description: ${course.description}</p>
+//                     <p class="card-price">Price: ${course.price || (isPremium ? 'Contact for Price' : 'Free')}</p>
+//                     <div class="btn-container">
+//                         <button class="btn btn-secondary mt-2 play-all" data-course-id="${courseId}">Play All</button>
+//                         <button class="btn btn-primary enroll ${isPremium ? 'premium-enroll' : ''}" data-course-id="${courseId}" style="${isPremium ? 'background-color: orange; border-color: orange;' : ''}">
+//                             ${isPremium ? 'Enroll (Premium)' : 'Enroll'}
+//                         </button>
+//                     </div>
+//                 </div>
+//             </div>
+//         `;
+
+//         coursesContainer.appendChild(courseElement);
+//     });
+
+//    // Event listeners for play all buttons
+//    document.querySelectorAll('.play-all').forEach(button => {
+//         button.addEventListener('click', async () => {
+//             const courseId = Number(button.dataset.courseId);
+//             const course = courses.find(c => c.id === courseId);
+
+//             if (course) {
+//                 try {
+//                     const isEnrolled = await checkEnrollment(course, userId);
+
+//                     if (isEnrolled) {
+//                         if (course.type === "premium") {
+//                             const isPaid = await checkPayment(course, userId);
+//                             if (isPaid) {
+//                                 // Navigate to the course if both enrolled and paid
+//                                 navigateToSingleCourse(course.id);
+//                             } else {
+//                                 // Show SweetAlert if not paid for premium course
+//                                 Swal.fire({
+//                                     title: 'Info',
+//                                     text: 'Please complete the payment for this premium course.',
+//                                     confirmButtonText: 'OK',
+//                                     showCloseButton: true
+//                                 });
+//                             }
+//                         } else {
+//                             // For free courses, navigate directly
+//                             navigateToSingleCourse(course.id);
+//                         }
+//                     } else {
+//                         // Show SweetAlert if not enrolled
+//                         Swal.fire({
+//                             title: 'Info',
+//                             text: 'Please enroll in the course first.',
+//                             confirmButtonText: 'OK',
+//                             showCloseButton: true
+//                         });
+//                     }
+//                 } catch (error) {
+//                     console.error("Error fetching course data:", error);
+//                     Swal.fire({
+//                         title: 'Error!',
+//                         text: 'An error occurred. Please try again later.',
+//                         icon: 'error',
+//                         confirmButtonText: 'OK',
+//                         showCloseButton: true
+//                     });
+//                 }
+//             } else {
+//                 console.error("Course not found for ID:", courseId);
+//                 Swal.fire('Error!', 'Course not found.', 'error');
+//             }
+//         });
+//     });
+
+//     // Event listeners for enroll buttons
+//     document.querySelectorAll('.enroll').forEach(button => {
+//         button.addEventListener('click', async () => {
+//             const courseId = Number(button.dataset.courseId);
+//             const course = courses.find(c => c.id === courseId);
+
+//             if (course) {
+//                 await handleEnrollment(course);
+//             } else {
+//                 console.error("Course not found for ID:", courseId);
+//                 Swal.fire('Error!', 'Course not found.', 'error');
+//             }
+//         });
+//     });
+// };
+
+// const handleEnrollment = async (course) => {
+//      if (!course || !course.type || !course.id) {
+//         console.error("Course object is invalid:", course);
+//         Swal.fire('Error!', 'Invalid course data.', 'error');
+//         return;
+//     }
+
+//     try {
+//         const isEnrolled = await checkEnrollment(course, userId);
+//         if (isEnrolled) {
+//             Swal.fire({
+//                 icon: 'info',
+//                 title: 'Already Enrolled',
+//                 text: 'You are already enrolled in this course.',
+//                 confirmButtonText: 'OK'
+//             });
+//             return;
+//         }
+
+//         if (course.type === "free") {
+//             // Get user details for free enrollments as well
+//             const { value: userDetails } = await Swal.fire({
+//                 title: `Enroll in ${course.title} (Free)`,
+//                 html: `
+//                     <input id="swal-input-name" class="swal2-input" placeholder="Your Name">
+//                     <input id="swal-input-phone" class="swal2-input" placeholder="Phone Number">
+//                     <label style="display: block; margin-top: 10px;">
+//                         <input type="checkbox" id="swal-input-confirm" class="swal2-checkbox">
+//                         I confirm that I want to enroll in this course.
+//                     </label>
+//                 `,
+//                 showCloseButton: true,
+//                 focusConfirm: false,
+//                 preConfirm: () => {
+//                     const name = document.getElementById('swal-input-name').value;
+//                     const phone = document.getElementById('swal-input-phone').value;
+//                     const isConfirmed = document.getElementById('swal-input-confirm').checked;
+
+//                     if (!name || !phone) {
+//                         Swal.showValidationMessage(`Please enter all required details`);
+//                         return false;
+//                     }
+
+//                     if (!isConfirmed) {
+//                         Swal.showValidationMessage(`Please confirm your enrollment`);
+//                         return false;
+//                     }
+
+//                     return { name, phone };
+//                 }
+//             });
+
+//             if (userDetails) {  // Proceed only if user confirmed and provided details
+//                 await enrollFreeCourse(course, userDetails); // Pass userDetails
+//             }
+//             return;
+//         }
+
+//         if (course.type === "premium") {
+//             await showPaymentModule(course);
+//         }
+//     } catch (error) {
+//        console.error("Error enrolling:", error);
+//         Swal.fire({
+//             icon: 'error',
+//             title: 'Error!',
+//             text: 'There was an issue enrolling in the course. Please try again later.',
+//             confirmButtonText: 'OK'
+//         });
+//     }
+// };
+
+// const enrollFreeCourse = async (course, userDetails) => {
+//     try {
+//         const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
+//         const snapshot = await get(userCoursesRef);
+//         let enrolledCourses = snapshot.val() || [];
+
+//           // Check if the user is already enrolled in a free course
+//         if (enrolledCourses.some(enrolledCourse => enrolledCourse.id === course.id)) {
+//             await Swal.fire({
+//                 icon: 'info',
+//                 title: 'Already Enrolled',
+//                 text: 'You are already enrolled in this free course.',
+//                 confirmButtonText: 'OK'
+//             });
+//             return;
+//         }
+
+//         enrolledCourses.push({
+//             id: course.id,
+//             title: course.title,
+//             category: course.category,
+//             type: course.type,
+//             price: course.price || 'Free',
+//             enrolledOn: new Date().toISOString(),
+//             name: userDetails.name,
+//             phone: userDetails.phone
+//         });
+
+//         await set(userCoursesRef, enrolledCourses);
+
+//         await Swal.fire({
+//             icon: 'success',
+//             title: 'Enrolled Successfully!',
+//             text: `You have successfully enrolled in ${course.title}.`,
+//             confirmButtonText: 'OK'
+//         });
+//     } catch (error) {
+//         console.error("Error enrolling in course:", error);
+//         await Swal.fire({
+//             icon: 'error',
+//             title: 'Error!',
+//             text: 'There was an issue enrolling in the course. Please try again later.',
+//             confirmButtonText: 'OK'
+//         });
+//     }
 // };
 
 
-// Make the displayCourses function accessible to window
-window.displayCourses = displayCourses;
+// const showPaymentModule = async (course) => {
+//     try {
+//         const { value: userDetails } = await Swal.fire({
+//             title: `Enroll in ${course.title}`,
+//             html: `
+//                 <p>You are enrolling in: <strong>${course.title}</strong></p>
+//                 <input id="swal-input-name" class="swal2-input" placeholder="Your Name">
+//                 <input id="swal-input-email" class="swal2-input" placeholder="Email">
+//                 <input id="swal-input-phone" class="swal2-input" placeholder="Phone Number">
+//                 <label style="display: block; margin-top: 10px;">
+//                     <input type="checkbox" id="swal-input-confirm" class="swal2-checkbox">
+//                     I confirm that I want to enroll in this course.
+//                 </label>
+//             `,
+//             showCloseButton: true,
+//             focusConfirm: false,
+//             preConfirm: () => {
+//                 const name = document.getElementById('swal-input-name').value;
+//                 const email = document.getElementById('swal-input-email').value;
+//                 const phone = document.getElementById('swal-input-phone').value;
+//                 const isConfirmed = document.getElementById('swal-input-confirm').checked;
 
+//                 if (!name || !email || !phone) {
+//                     Swal.showValidationMessage(`Please enter all required details`);
+//                     return false;
+//                 }
 
-let logout=document.getElementById("Logout")
-logout.addEventListener("click", () => {
-    window.location.href = "index.html";
-  });
+//                 if (!isConfirmed) {
+//                     Swal.showValidationMessage(`Please confirm your enrollment`);
+//                     return false;
+//                 }
+
+//                 return { name, email, phone };
+//             }
+//         });
+//           console.log("userDetails BEFORE payment:", userDetails);
+
+//         if (userDetails) {
+//             const paymentSuccess = await processPayment(course);
+//             if (paymentSuccess) {
+//                 const paymentMethod = await selectPaymentMethod(course);
+
+//                 if (paymentMethod === 'upi') {
+//                     await handleUPIPayment(course);
+//                 } else if (paymentMethod === 'creditCard') {
+//                     await handleCreditCardPayment(course);
+//                 }
+
+//                  console.log("userDetails before enrollPaidCourse:", userDetails);
+
+//                 await enrollPaidCourse(course, userDetails);
+//             }
+//         }
+//     } catch (error) {
+//        console.error("Error during payment module:", error);
+//         Swal.fire({
+//             icon: 'error',
+//             title: 'Error!',
+//             text: 'There was an issue with the payment process. Please try again later.',
+//             confirmButtonText: 'OK'
+//         });
+//     }
+// };
+
+// const checkEnrollment = async (course, userId) => {
+//     try {
+//         const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
+//         const snapshot = await get(userCoursesRef);
+//         const enrolledCourses = snapshot.val() || [];
+
+//         return enrolledCourses.some(enrolledCourse => enrolledCourse.id === course.id);
+//     } catch (error) {
+//         return false; // Treat errors as not enrolled
+//     }
+// };
+
+// const checkPayment = async (course, userId) => {
+//      try {
+//         const userPaymentsRef = ref(database, `users/${userId}/payments`);
+//         const snapshot = await get(userPaymentsRef);
+//         const payments = snapshot.val() || [];
+
+//         return payments.some(payment => payment.courseId === course.id);
+//     } catch (error) {
+//         return false; // Treat errors as not paid
+//     }
+// };

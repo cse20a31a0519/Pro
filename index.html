@@ -37,23 +37,20 @@
   background-image: url('../assets/main-bg.jpg');
   background-size: cover;
   background-position: center;
-  height: 80vh;
+  height: 90vh;
   display: flex;
   color: #dd8343;
-  padding-top: revert;
- padding-top: 10px;
+  text-shadow: #58a1d4;
+  color: #007bff;;
   text-align: right;
   align-items:flex-start;
   justify-content:flex-start; /* Align content to the left */
   padding-left: 30px; /* Add some padding from the left side */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
-.main-section h6{
-  color: rgb(255, 255, 255);
-}
 .main-title {
-  font-size: 3.5rem;
-  font-weight: bold;
+  color: #dd8343;
+  font-size: 2rem;
   margin-bottom: 20px;
 }
 
@@ -63,15 +60,15 @@
 } 
 
 .section {
-  padding: 60px 15px;
+  padding: 10px 15px;
 }
 
-.features-section, .pricing-section {
+.features-section, .course-section {
   background-color: #f8f9fa;
 }
 
-/* Feature and Pricing Items */
-.feature-item, .pricing-item {
+/* Feature and course Items */
+.feature-item, .course-item {
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
@@ -81,27 +78,27 @@
   text-align: center;
 }
 
-.feature-item:hover, .pricing-item:hover {
+.feature-item:hover, .course-item:hover {
   transform: scale(1.05);
 }
 
-.feature-item h3, .pricing-item h3 {
+.feature-item h3, .course-item h3 {
   font-size: 1.5rem;
   margin-bottom: 10px;
 }
 
-.feature-item p, .pricing-item p {
+.feature-item p, .course-item p {
   font-size: 1rem;
   color: #666;
 }
 
-.pricing-item .price {
+.course-item .price {
   font-size: 2rem;
   font-weight: bold;
   color: #007bff;
 }
 
-.pricing-item button {
+.course-item button {
   margin-top: 10px;
   background-color: #007bff;
   color: #fff;
@@ -110,7 +107,7 @@
   transition: background-color 0.3s ease-in-out;
 }
 
-.pricing-item button:hover {
+.course-item button:hover {
   background-color: #0056b3;
 }
 
@@ -137,9 +134,9 @@
 }
 
 /* Contact Section */
-#contact {
+#contact,#about {
   background-color: #f8f9fa;
-  padding: 40px 20px;
+  padding: 10px 20px;
 }
 
 #contact p {
@@ -157,16 +154,20 @@
       margin-top: 10px;
   }
 
-  .pricing-item {
+  .course-item {
       margin-bottom: 20px;
   }
 }
 
 
 @media (min-width: 768px) {
-  .main-title {
+  .main-section .main-title {
     font-size: 3rem;
   }
+  .col-md-4 {
+        flex: 0 0 auto;
+        width: 30.33333333%;
+    }
 }
 
 @media (max-width: 576px) {
@@ -174,7 +175,7 @@
     flex-direction: column;
   }
 
-  .feature-item, .pricing-item {
+  .feature-item, .course-item {
     width: 90%;
     margin: auto;
     margin-bottom: 20px;
@@ -188,36 +189,36 @@
   <body>
 
   <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light  fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><h2> EduSpark </h2></a>
+            <a class="navbar-brand" href="#" style="color: #dd8343;"><h2> EduSpark </h2></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto"> <!-- Centered navbar links -->
                   <li class="nav-item">
-                    <a class="nav-link" href="#about"><h5>About</h5>
+                    <a class="nav-link" href="#about" style="color: #dd8343;"><h5>About</h5>
                         <i></i>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#categories">
+                    <a class="nav-link" href="#categories" style="color: #dd8343;">
                         <i></i> <h5>Categories</h5>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#pricing">
-                        <i></i><h5> PricingPlans</h5>
+                    <a class="nav-link" href="#course" style="color: #dd8343;">
+                        <i></i><h5> Courses</h5>
                     </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#features">
+                  <a class="nav-link" href="#features" style="color: #dd8343;">
                       <i></i> <h5>features</h5>
                   </a>
               </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#contact">
+                    <a class="nav-link" href="#contact" style="color: #dd8343;">
                         <i></i><h5> Contact</h5>
                     </a>
                 </li>
@@ -288,8 +289,6 @@
     <div class="row align-items-center">
       <div class="text-center">
         <h1 class="main-title">Welcome To EduSpark</h1>
-        <h6>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ullam aperiam minus ipsa commodi odit libero, totam sed! Officiis illum tempora quos hic, blanditiis error ab, ratione consequuntur iusto praesentium natus?</h6>
-
       </div>
     </div>
   </div>
@@ -306,31 +305,24 @@
   
 
 </section>
-<section id="pricing" class="section text-center pricing-section">
-  <h2 class="main-title">Choose Your Plan</h2>
-  <p>Each week we provide top-tier educational resources for your learning journey.</p>
+<section id="course" class="section text-center course-section">
+  <h2 class="main-title">Courses Types</h2>
+  <p> we provide educational  resources for your learning journey.</p>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-12 col-md-4 pricing-item">
-        <h3>Monthly</h3>
-        <p class="price">$39</p>
-        <button class="btn btn-primary">Join Now</button>
+      <div class="col-12 col-md-4 course-item">
+        <h3>we Provide you subscription courses</h3>
+        <button class="btn btn-primary">Premium</button>
       </div>
-      <div class="col-12 col-md-4 pricing-item">
-        <h3>Annual</h3>
-        <p class="price">$399</p>
-        <button class="btn btn-primary">Join Now and Save 15%</button>
-      </div>
-      <div class="col-12 col-md-4 pricing-item">
-        <h3>Two Year</h3>
-        <p class="price">$749</p>
-        <button class="btn btn-primary">Join Now and Save 20%</button>
+      <div class="col-12 col-md-4 course-item">
+        <h3>We Provide you  large number of free courses</h3>
+        <button class="btn btn-primary">Free</button>
       </div>
     </div>
   </div>
 </section>
 
-<section id="categories" class="section text-center features-section">
+<section id="categories" class="section text-center features-section py-5">
   <h2 class="main-title">Categories</h2>
   <div class="container">
     <div class="row justify-content-center">
@@ -352,11 +344,11 @@
 <section class="features-section py-5" id="features">
   <div class="container">
     <h4 class="main-title" style="text-align: center;">Features</h4>
-    <div class="row text-center">
+    <div class="row text-center justify-content-center">
       <div class="col-md-4">
         <div class="feature-item">
           <h3>Expert Instructors</h3>
-          <p>Learn from industry experts with years of experience.</p>
+          <p>Learn from industry experts with experience.</p>
         </div>
       </div>
       <div class="col-md-4">
@@ -377,19 +369,12 @@
 
 <section id="contact" class="section text-center">
   <h4 class="main-title">Contact Us</h4>
-  <p>Follow us on social media:</p>
   <div class="social-icons">
     <a href="#" class="me-3"><i class="fab fa-whatsapp fa-2x"></i></a>
     <a href="#" class="me-3"><i class="fab fa-facebook fa-2x"></i></a>
     <a href="#"><i class="fab fa-instagram fa-2x"></i></a>
   </div>
 </section>
-
-</body>
-</html>
-
-
-
 
 </body>
 </html>

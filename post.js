@@ -174,7 +174,7 @@ const designing =  [
   
   const dataScience = [
     {
-      "id": 5,
+      "id": 1,
       "title": "Introduction to Data Science",
       "type": "free",
       "description": "Learn the basics of data science and analytics.",
@@ -194,7 +194,7 @@ const designing =  [
       ]
     },
     {
-      "id": 6,
+      "id": 2,
       "title": "Data Visualization with Python",
       "type": "free",
       "description": "Learn how to visualize data using Python libraries.",
@@ -214,7 +214,7 @@ const designing =  [
       ]
     },
     {
-      "id": 7,
+      "id": 3,
       "title": "Introduction to Data Science",
       "type":"free",
       "description": "Learn the basics of data science and analytics.",
@@ -234,7 +234,7 @@ const designing =  [
       ]
     },
     {
-      "id": 8,
+      "id": 4,
       "title": "Advanced Machine Learning with Python",
       "type": "premium",
       "description": "Dive deep into machine learning with Python.",
@@ -254,7 +254,7 @@ const designing =  [
       ]
     },
     {
-      "id": 9,
+      "id": 5,
       "title": "Deep Learning with TensorFlow",
       "type": "premium",
       "description": "Learn deep learning with TensorFlow framework.",
@@ -277,7 +277,7 @@ const designing =  [
   ]
   const It=  [
     {
-      "id": 10,
+      "id": 1,
       "title": "HTML Course",
       "type": "free",
       "description": "Learn the basics of HTML with hands on experience!!",
@@ -297,7 +297,7 @@ const designing =  [
       ]
     },    
     {
-      "id": 11,
+      "id": 2,
       "title": "CSS Course",
       "type": "free",
       "description": "Learn how to style websites using CSS.",
@@ -317,7 +317,7 @@ const designing =  [
       ]
     },    
     {
-      "id": 12,
+      "id": 3,
       "title": "Web Development Bootcamp",
       "type": "premium",
       "description": "Learn to build websites using HTML, CSS, and JavaScript.",
@@ -337,7 +337,7 @@ const designing =  [
       ]
     },    
     {
-      "id": 13,
+      "id": 4,
       "title": "C++",
       "type": "premium",
       "description": "Learn the C++ programming language.",
@@ -357,7 +357,7 @@ const designing =  [
       ]
     },
     {
-      "id": 14,
+      "id": 5,
       "title": "Python Course",
       "type": "premium",
       "description": "Learn Python programming from basic to advanced.",
@@ -377,7 +377,7 @@ const designing =  [
       ]
     },    
     {
-      "id": 15,
+      "id": 6,
       "title": "Azure Course",
       "type": "premium",
       "description": "Learn Microsoft Azure cloud services.",
@@ -397,7 +397,7 @@ const designing =  [
       ]
     },    
     {
-      "id": 16,
+      "id": 7,
       "title": "C# Course",
       "type": "free",
       "description": "Learn C# programming from beginner to advanced.",
@@ -417,7 +417,7 @@ const designing =  [
       ]
     },    
     {
-      "id": 17,
+      "id": 8,
       "title": "PHP Course",
       "type": "premium",
       "description": "Learn PHP for web development with hands on experience !!",
@@ -437,7 +437,7 @@ const designing =  [
       ]
     },
     {
-      "id": 18,
+      "id": 9,
       "title": "React Course",
       "type": "premium",
       "description": "Learn to build user interfaces with React.",
@@ -457,7 +457,7 @@ const designing =  [
       ]
     },
     {
-      "id": 19,
+      "id": 10,
       "title": "SQL Course",
       "type": "premium",
       "description": "Learn to manage databases using SQL.",
@@ -477,7 +477,7 @@ const designing =  [
       ]
     },  
     {
-      "id": 20,
+      "id": 11,
       "title": "Java Course",
       "type": "premium",
       "description": "Learn Java programming from basics to advanced.",
@@ -497,7 +497,7 @@ const designing =  [
       ]
     },
     {
-      "id": 1,
+      "id": 12,
       "title": "AWS Course",
       "type": "premium",
       "description": "Learn Amazon Web Services (AWS) for cloud computing.",
