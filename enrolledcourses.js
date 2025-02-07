@@ -13,20 +13,18 @@ async function loadEnrolledCourses(userId) {
                 coursesContainer.innerHTML = ""; // Clear previous content
 
                 userData.enrolledCourses.forEach((course, index) => {
-                    // Sample course data (Modify based on your actual database structure)
-                    const imageUrl = course.imageUrl || "default-image.jpg"; // Replace with actual image field
-                    
+                    // Create course card
                     const courseElement = document.createElement("div");
                     courseElement.classList.add("col-md-4", "mb-4");
 
                     courseElement.innerHTML = `
                         <div class="card h-100">
-                            <div class="image-container">
-                                <img src="${imageUrl}" class="card-img-top img-fluid course-image" alt="${course.title}">
-                            </div>
                             <div class="card-body">
-                                <h5 class="card-title">Title: ${course.title}</h5>
-                                <p class="card-text">Description: ${course.description}</p>
+                                <h5 class="card-title"><strong>Title:</strong> ${course.title}</h5>
+                                <p class="card-text"><strong>Category:</strong> ${course.category}</p>
+                                <p class="card-text"><strong>Type:</strong> ${course.type}</p>
+                                <p class="card-text"><strong>Price:</strong> $${course.price}</p>
+                                <p class="card-text"><strong>Enrolled On:</strong> ${new Date(course.enrolledOn).toLocaleDateString()}</p>
                             </div>
                         </div>
                     `;
@@ -35,6 +33,7 @@ async function loadEnrolledCourses(userId) {
                 });
             } else {
                 console.log("No enrolled courses found for this user.");
+                document.getElementById("courses-container").innerHTML = "<p>No enrolled courses found.</p>";
             }
         } else {
             console.log("User not found in the database.");
@@ -43,6 +42,45 @@ async function loadEnrolledCourses(userId) {
         console.error("Error fetching enrolled courses:", error);
     }
 }
+
+// async function loadEnrolledCourses(userId) {
+//     try {
+//         const dbRef = ref(database);
+//         const userSnapshot = await get(child(dbRef, `users/${userId}`)); // Assuming user data is stored under "users/"
+
+//         if (userSnapshot.exists()) {
+//             const userData = userSnapshot.val();
+//             if (userData.enrolledCourses) {
+//                 const coursesContainer = document.getElementById("courses-container");
+//                 coursesContainer.innerHTML = ""; // Clear previous content
+
+//                 userData.enrolledCourses.forEach((course, index) => {
+//                     // Sample course data (Modify based on your actual database structure) // Replace with actual image field
+                    
+//                     const courseElement = document.createElement("div");
+//                     courseElement.classList.add("col-md-4", "mb-4");
+
+//                     courseElement.innerHTML = `
+//                         <div class="card h-100">
+//                             <div class="card-body">
+//                                 <h5 class="card-title">Title: ${course.title}</h5>
+//                                 <p class="card-text">Description: ${course.description}</p>
+//                             </div>
+//                         </div>
+//                     `;
+
+//                     coursesContainer.appendChild(courseElement);
+//                 });
+//             } else {
+//                 console.log("No enrolled courses found for this user.");
+//             }
+//         } else {
+//             console.log("User not found in the database.");
+//         }
+//     } catch (error) {
+//         console.error("Error fetching enrolled courses:", error);
+//     }
+// }
 
 // Auth state listener
 auth.onAuthStateChanged(user => {
