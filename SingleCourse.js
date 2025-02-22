@@ -1,432 +1,310 @@
-// import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-// import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-// import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
-// import { get} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
-// // Your web app's Firebase configuration
-// const firebaseConfig = {
-//   apiKey: "AIzaSyB5iAUnK_5AP7ijrcQvlRfvCSfXrH9n6Ak",
-//   authDomain: "index-16f53.firebaseapp.com",
-//   projectId: "index-16f53",
-//   storageBucket: "index-16f53.firebasestorage.app",
-//   messagingSenderId: "171804052014",
-//   appId: "1:171804052014:web:c38d9d50835d551cafadbf"
-// };
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+import { getAuth, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import {getDatabase, ref, get, set, push } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
+// // Firebase configuration
+// const firebaseConfig = {
+//     apiKey: "AIzaSyB5iAUnK_5AP7ijrcQvlRfvCSfXrH9n6Ak",
+//     authDomain: "index-16f53.firebaseapp.com",
+//     projectId: "index-16f53",
+//     storageBucket: "index-16f53.firebasestorage.app",
+//     messagingSenderId: "171804052014",
+//     appId: "1:171804052014:web:c38d9d50835d551cafadbf"
+// };
 // // Initialize Firebase
 // const app = initializeApp(firebaseConfig);
 // const auth = getAuth(app);
 // const database = getDatabase(app);
 
-// let userId = localStorage.getItem('userid');
-// if (!userId) {
-//     console.error('User ID not found in localStorage.');
-//     window.location.href = "login.html";
-//     throw new Error("User ID is required.");
-// }
+// // Get course title and category from local storage
+// // const courseTitle = localStorage.getItem('courseTitle');
+// // console.log(courseTitle)
+// // const courseCategory = localStorage.getItem('courseCategory');
+// // console.log(courseCategory)
 
-// const courseCategory = localStorage.getItem('courseCategory'); // e.g., "datascience"
-// const courseId = localStorage.getItem('courseId'); // e.g., "course1"
-// console.log(courseCategory,courseId)
+// document.getElementById('course-title').innerText = courseTitle;
+// // Get course title and category from local storage
+// const courseTitle = localStorage.getItem('courseTitle');
+// const courseCategory = localStorage.getItem('courseCategory');
 
-// let completedVideos = 0;
-// let totalVideos = 0;
-// let videoList = [];
+// document.getElementById('course-title').innerText = courseTitle;
 
-// // Fetch course data from Firebase
-// async function fetchCourseData() {
-//     const courseRef = ref(database, `admin/courses/categories/${courseCategory}/${courseId}`);
-//     const snapshot = await get(courseRef);
-//     const courseData = snapshot.val();
+// // Fetch video links for 10 videos from Firebase
+// const videoContainer = document.getElementById('video-container');
 
-//     if (!courseData) {
-//         console.error('Course data not found.');
-//         return;
+// async function fetchVideos() {
+//     const videoLinks = [];
+    
+//     for (let i = 1; i <= 10; i++) {  // Assuming there are 10 videos
+//         const snapshot = await database.ref(`/admin/courses/${courseCategory}/${i}/video_links/`).once('value');
+//         const videos = snapshot.val();
+        
+//         if (videos) {
+//             Object.values(videos).forEach(video => {
+//                 videoLinks.push({
+//                     title: video.title,
+//                     link: video.link
+//                 });
+//             });
+//         }
 //     }
 
-//     document.getElementById('course-title').textContent = courseData.title;
-//     videoList = courseData.videos;
-//     totalVideos = videoList.length;
-
-//     // Populate video list
-//     const videoListContainer = document.querySelector('.video-list');
-//     videoList.forEach((video, index) => {
-//         const videoItem = document.createElement('div');
-//         videoItem.className = 'video-item';
-//         videoItem.innerHTML = `
-//             <p>${video.title}</p>
-//             <button class="btn-success" onclick="startVideo(${index})">Start</button>
-//             <button class="btn-download" onclick="downloadVideo('${video.url}')">Download</button>
-//         `;
-//         videoListContainer.appendChild(videoItem);
-//     });
-
-//     // Load the first video by default
-//     loadVideo(0);
+//     if (videoLinks.length > 0) {
+//         loadVideo(videoLinks[0].link); // Load first video by default
+//         displayVideos(videoLinks);
+//     }
 // }
 
-// fetchCourseData();
+// function displayVideos(videoLinks) {
+//     videoContainer.innerHTML = '';
 
-// function loadVideo(index) {
+//     videoLinks.forEach((video, index) => {
+//         const videoElement = document.createElement('div');
+//         videoElement.classList.add('video-item');
+
+//         videoElement.innerHTML = `
+//             <h3>${video.title}</h3>
+//             <button onclick="loadVideo('${video.link}')">Start</button>
+//             <button onclick="stopVideo()">Stop</button>
+//             <button onclick="addToWatchLater('${video.link}', '${video.title}')">Watch Later</button>
+//             <button onclick="downloadVideo('${video.link}')">Download</button>
+//         `;
+
+//         videoContainer.appendChild(videoElement);
+//     });
+// }
+
+// function loadVideo(videoLink) {
 //     const videoPlayer = document.getElementById('video-player');
 //     const videoSource = document.getElementById('video-source');
-//     videoSource.src = videoList[index].url;
+//     videoSource.src = videoLink;
 //     videoPlayer.load();
 //     videoPlayer.play();
-//     document.getElementById('video-display').style.display = 'block';
 // }
 
-// function startVideo(index) {
-//     loadVideo(index);
-//     const videoPlayer = document.getElementById('video-player');
-//     videoPlayer.onended = function () {
-//         completeVideo(index);
-//     };
-// }
-
-// window.stopVideo = function () {
+// function stopVideo() {
 //     const videoPlayer = document.getElementById('video-player');
 //     videoPlayer.pause();
-// };
-
-// function downloadVideo(url) {
-//     const link = document.createElement('a');
-//     link.href = url;
-//     link.download = url.split('/').pop();
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link);
 // }
 
-// async function completeVideo(index) {
-//     if (completedVideos < totalVideos) {
-//         completedVideos++;
-//         updateProgress();
-//         document.querySelectorAll('.btn-success')[index].disabled = true;
+// function addToWatchLater(videoLink, videoTitle) {
+//     const userId = localStorage.getItem('userId');
+//     const userName = localStorage.getItem('userName');
 
-//         // Save progress to Firebase
-//         const progressRef = ref(database, `users/${userId}/progress/${courseId}`);
-//         await set(progressRef, { completedVideos, totalVideos });
+//     database.ref(`watchLater/${userId}`).push({
+//         userName: userName,
+//         courseTitle: courseTitle,
+//         videoTitle: videoTitle,
+//         videoLink: videoLink
+//     }).then(() => {
+//         alert('Added to Watch Later!');
+//     });
+// }
+
+// function downloadVideo(videoLink) {
+//     const link = document.createElement('a');
+//     link.href = videoLink;
+//     link.download = 'video.mp4';
+//     link.click();
+// }
+
+// // Fetch videos when the page loads
+// fetchVideos();
+
+
+// // Fetch video links from Firebase
+// database.ref(`courses/${courseCategory}/${courseTitle}`).once('value').then(snapshot => {
+//     const videos = snapshot.val();
+//     if (videos) {
+//         const videoLinks = Object.values(videos);
+//         loadVideo(videoLinks[0]); 
+//         document.getElementById('start-btn').addEventListener('click', () => startVideo(videoLinks));
+//         document.getElementById('stop-btn').addEventListener('click', stopVideo);
+//         document.getElementById('watch-later-btn').addEventListener('click', () => addToWatchLater(videoLinks[0]));
+//         document.getElementById('download-btn').addEventListener('click', () => downloadVideo(videoLinks[0]));
+//         document.getElementById('complete-btn').addEventListener('click', updateProgress);
+//         document.getElementById('generate-certificate-btn').addEventListener('click', generateCertificate);
 //     }
+// });
+
+// function loadVideo(videoLink) {
+//     const videoPlayer = document.getElementById('video-player');
+//     const videoSource = document.getElementById('video-source');
+//     videoSource.src = videoLink;
+//     videoPlayer.load();
+// }
+
+// function startVideo(videoLinks) {
+//     const videoPlayer = document.getElementById('video-player');
+//     videoPlayer.play();
+// }
+
+// function stopVideo() {
+//     const videoPlayer = document.getElementById('video-player');
+//     videoPlayer.pause();
+// }
+
+// function addToWatchLater(videoLink) {
+//     const userId = localStorage.getItem('userId');
+//     const userName = localStorage.getItem('userName');
+//     const videoTitle = document.getElementById('course-title').innerText;
+
+//     database.ref(`watchLater/${userId}`).push({
+//         userName: userName,
+//         courseTitle: courseTitle,
+//         videoTitle: videoTitle,
+//         videoLink: videoLink
+//     }).then(() => {
+//         alert('Added to Watch Later!');
+//     });
+// }
+
+// function downloadVideo(videoLink) {
+//     const link = document.createElement('a');
+//     link.href = videoLink;
+//     link.download = 'video.mp4';
+//     link.click();
 // }
 
 // function updateProgress() {
 //     const progressBar = document.getElementById('progress-bar');
-//     const progressText = document.getElementById('progress-text');
-//     const progressPercentage = (completedVideos / totalVideos) * 100;
+//     let progress = parseInt(progressBar.style.width) || 0;
+//     progress += 10;
+//     progressBar.style.width = progress + '%';
 
-//     progressBar.value = progressPercentage;
-//     progressText.textContent = `Progress: ${Math.round(progressPercentage)}%`;
-
-//     // Enable certificate generation if all videos are completed
-//     if (completedVideos === totalVideos) {
-//         document.getElementById('generate-certificate').disabled = false;
+//     if (progress >= 100) {
+//         document.getElementById('generate-certificate-btn').disabled = false;
 //     }
 // }
 
-// async function generateCertificate() {
-//     const courseTitle = document.getElementById('course-title').textContent;
+// function generateCertificate() {
+//     const userId = localStorage.getItem('userId');
+//     const userName = localStorage.getItem('userName');
 
-//     try {
-//         const userCertsRef = ref(database, `users/${userId}/certificates`);
-//         const certSnapshot = await get(userCertsRef);
-//         const existingCerts = certSnapshot.val() || [];
-
-//         const certExists = existingCerts.some(cert => cert.courseTitle === courseTitle);
-
-//         if (certExists) {
-//             Swal.fire({
-//                 icon: 'info',
-//                 title: 'Already Generated',
-//                 text: `You have already generated a certificate for ${courseTitle}.`,
-//                 confirmButtonText: 'OK',
-//                 showCloseButton: true
-//             });
-//             return;
-//         }
-
-//         const certificateData = {
-//             courseTitle: courseTitle,
-//             generatedOn: new Date().toISOString(),
-//         };
-
-//         existingCerts.push(certificateData);
-//         await set(userCertsRef, existingCerts);
-
-//         Swal.fire({
-//             icon: 'success',
-//             title: 'Certificate Generated!',
-//             text: `Your certificate for ${courseTitle} has been generated.`,
-//             confirmButtonText: 'OK',
-//             showCloseButton: true
-//         }).then(() => {
-//             // Redirect to certificate.html
-//             window.location.href = `certificate.html?course=${encodeURIComponent(courseTitle)}`;
-//         });
-
-//     } catch (error) {
-//         console.error("Error generating certificate:", error);
-//         Swal.fire({
-//             icon: 'error',
-//             title: 'Error',
-//             text: 'There was an error generating the certificate. Please try again later.',
-//             confirmButtonText: 'OK',
-//             showCloseButton: true
-//         });
-//     }
+//     database.ref(`certificates/${userId}`).set({
+//         userName: userName,
+//         courseTitle: courseTitle,
+//         status: 'Completed'
+//     }).then(() => {
+//         alert('Certificate Generated!');
+//     });
 // }
 
-// window.generateCertificate = generateCertificate;
-// // document.addEventListener('DOMContentLoaded', function () {
-// //     let totalVideos = 10;
-// //     let completedVideos = 0;
-// //     const progressBar = document.querySelector('progress');
-// //     const generateCertificateBtn = document.getElementById('generate-certificate');
-// //     const videoItems = document.querySelectorAll('.video-item');
-// //     const videoDisplay = document.getElementById('video-display'); // Video display div
-
-// //     // Update the global progress bar
-// //     function updateProgressBar() {
-// //         let progress = (completedVideos / totalVideos) * 100;
-// //         progressBar.value = progress;
-
-// //         // Enable the certificate button when 100% progress is reached
-// //         if (progress === 100) {
-// //             generateCertificateBtn.disabled = false;
-// //         }
-// //     }
-
-// //     // Mark a video as completed
-// //     function markVideoAsCompleted(videoIndex) {
-// //         completedVideos++;
-// //         videoItems[videoIndex].classList.add('active');
-// //         videoItems[videoIndex].querySelector('.btn-success').textContent = 'Completed';
-// //         videoItems[videoIndex].querySelector('.btn-success').disabled = true; // Disable the Complete button
-// //         updateProgressBar();
-// //     }
-
-// //     // Add event listeners to each video
-// //     videoItems.forEach((item, index) => {
-// //         const videoUrl = item.querySelector('.video-url a');
-
-// //         // When the video URL is clicked, display the video in the video display div
-// //         videoUrl.addEventListener('click', function (event) {
-// //             event.preventDefault(); // Prevent default link behavior
-// //             videoDisplay.style.display = 'block'; // Show the video display div
-// //             videoDisplay.innerHTML = `<iframe width="100%" height="100%" src="https://www.example.com/video${index+1}" frameborder="0" allowfullscreen></iframe>`;
-// //         });
-
-// //         // Complete button click
-// //         item.querySelector('.btn-success').addEventListener('click', function () {
-// //             markVideoAsCompleted(index);
-// //         });
-
-// //         // Watch Later button click
-// //         item.querySelector('.btn-secondary').addEventListener('click', function () {
-// //             alert(`You chose to watch Video ${index+1} later.`);
-// //         });
-// //     });
-
-// //     // Enable Certificate generation after all videos are completed
-// //     generateCertificateBtn.addEventListener('click', function () {
-// //         alert('Certificate Generated!');
-// //     });
-// // });
-
-
-
-
-
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB5iAUnK_5AP7ijrcQvlRfvCSfXrH9n6Ak",
-  authDomain: "index-16f53.firebaseapp.com",
-  projectId: "index-16f53",
-  storageBucket: "index-16f53.firebasestorage.app",
-  messagingSenderId: "171804052014",
-  appId: "1:171804052014:web:c38d9d50835d551cafadbf"
+    apiKey: "AIzaSyB5iAUnK_5AP7ijrcQvlRfvCSfXrH9n6Ak",
+    authDomain: "index-16f53.firebaseapp.com",
+    projectId: "index-16f53",
+    storageBucket: "index-16f53.firebasestorage.app",
+    messagingSenderId: "171804052014",
+    appId: "1:171804052014:web:c38d9d50835d551cafadbf"
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getDatabase(app);
+const app = firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-let userId = localStorage.getItem('userid');
-if (!userId) {
-    console.error('User ID not found in localStorage.');
-    window.location.href = "login.html";
-    throw new Error("User ID is required.");
-}
+// Get course title and category from URL query parameters
+const urlParams = new URLSearchParams(window.location.search);
+const courseTitle = urlParams.get('courseTitle');
+const courseCategory = urlParams.get('courseCategory');
 
-const courseId = localStorage.getItem('courseId'); // e.g., "course1"
-let courseCategory = localStorage.getItem('courseCategory'); // e.g., "DataScience"
+document.addEventListener('DOMContentLoaded', () => {
+    // Fetch course details from Firebase
+    const courseRef = database.ref(`courses/${courseCategory}/${courseTitle}`);
+    courseRef.once('value').then(snapshot => {
+        const course = snapshot.val();
 
-let completedVideos = 0;
-let totalVideos = 0;
-let videoList = [];
+        if (course) {
+            const courseContainer = document.getElementById('course-detail-container');
 
-// Fetch course data from Firebase
-async function fetchCourseData() {
-    // Retrieve courseId and courseCategory from local storage
-    const courseId = localStorage.getItem('courseId');
-    const courseCategory = localStorage.getItem('courseCategory');
+            let cardHTML = `
+                <div class="card">
+                    <img src="${course.image}" class="card-img-top" alt="${courseTitle}" style="max-height: 300px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">${courseTitle}</h5>
+                        <p class="card-text">${course.description}</p>
+                        <h6>Videos</h6>
+                        <div class="video-list">
+                            ${Object.values(course.video_links).map((video, index) => `
+                                <div class="video-item mb-3">
+                                    <p>${video.title}</p>
+                                    <button class="btn btn-primary" onclick="playVideo('${video.link}', ${index})">Play Video</button>
+                                    <button class="btn btn-secondary" onclick="saveToWatchLater('${video.link}')">Watch Later</button>
+                                    <button class="btn btn-success" onclick="completeVideo(${index})">Complete Video</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <h6>Progress</h6>
+                        <progress id="progress-bar" value="0" max="100" class="w-100"></progress>
+                        <p id="progress-text">0%</p>
+                        <button id="generate-certificate" class="btn btn-success" disabled>Generate Certificate</button>
+                    </div>
+                </div>
+            `;
 
-    if (!courseId || !courseCategory) {
-        console.error('Course ID or Category not found in localStorage.');
-        return;
-    }
+            courseContainer.innerHTML = cardHTML;
 
-    // Fetch the course data using the courseCategory and courseId
-    const courseRef = ref(database, `admin/courses/${courseCategory}/${courseId}`);
-    const snapshot = await get(courseRef);
-    const courseData = snapshot.val();
+            let completedVideos = new Set();
+            document.querySelectorAll('.btn-primary').forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    completedVideos.add(index);
+                    const progress = (completedVideos.size / Object.keys(course.video_links).length) * 100;
+                    document.getElementById('progress-bar').value = progress;
+                    document.getElementById('progress-text').textContent = `${Math.round(progress)}%`;
 
-    if (!courseData) {
-        console.error('Course data not found.');
-        return;
-    }
-
-    // Update the course title in the UI
-    document.getElementById('course-title').textContent = courseData.title;
-
-    // Populate the video list
-    videoList = courseData.video;
-    totalVideos = videoList.length;
-
-    const videoListContainer = document.querySelector('.video-list');
-    videoListContainer.innerHTML = ''; // Clear any existing video items
-
-    videoList.forEach((video, index) => {
-        const videoItem = document.createElement('div');
-        videoItem.className = 'video-item';
-        videoItem.innerHTML = `
-            <p>${video.title}</p>
-            <button class="btn-success" onclick="startVideo(${index})">Start</button>
-            <button class="btn-download" onclick="downloadVideo('${video.url}')">Download</button>
-        `;
-        videoListContainer.appendChild(videoItem);
-    });
-
-    // Load the first video by default
-    loadVideo(0);
-}
-
-fetchCourseData();
-
-fetchCourseData();
-
-function loadVideo(index) {
-    const videoPlayer = document.getElementById('video-player');
-    const videoSource = document.getElementById('video-source');
-    videoSource.src = videoList[index].url;
-    videoPlayer.load();
-    videoPlayer.play();
-    document.getElementById('video-display').style.display = 'block';
-}
-
-function startVideo(index) {
-    loadVideo(index);
-    const videoPlayer = document.getElementById('video-player');
-    videoPlayer.onended = function () {
-        completeVideo(index);
-    };
-}
-
-window.stopVideo = function () {
-    const videoPlayer = document.getElementById('video-player');
-    videoPlayer.pause();
-};
-
-function downloadVideo(url) {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = url.split('/').pop();
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-async function completeVideo(index) {
-    if (completedVideos < totalVideos) {
-        completedVideos++;
-        updateProgress();
-        document.querySelectorAll('.btn-success')[index].disabled = true;
-
-        // Save progress to Firebase
-        const progressRef = ref(database, `users/${userId}/progress/${courseId}`);
-        await set(progressRef, { completedVideos, totalVideos });
-    }
-}
-
-function updateProgress() {
-    const progressBar = document.getElementById('progress-bar');
-    const progressText = document.getElementById('progress-text');
-    const progressPercentage = (completedVideos / totalVideos) * 100;
-
-    progressBar.value = progressPercentage;
-    progressText.textContent = `Progress: ${Math.round(progressPercentage)}%`;
-
-    // Enable certificate generation if all videos are completed
-    if (completedVideos === totalVideos) {
-        document.getElementById('generate-certificate').disabled = false;
-    }
-}
-
-async function generateCertificate() {
-    const courseTitle = document.getElementById('course-title').textContent;
-
-    try {
-        const userCertsRef = ref(database, `users/${userId}/certificates`);
-        const certSnapshot = await get(userCertsRef);
-        const existingCerts = certSnapshot.val() || [];
-
-        const certExists = existingCerts.some(cert => cert.courseTitle === courseTitle);
-
-        if (certExists) {
-            Swal.fire({
-                icon: 'info',
-                title: 'Already Generated',
-                text: `You have already generated a certificate for ${courseTitle}.`,
-                confirmButtonText: 'OK',
-                showCloseButton: true
+                    if (completedVideos.size === Object.keys(course.video_links).length) {
+                        document.getElementById('generate-certificate').disabled = false;
+                    }
+                });
             });
-            return;
+
+            document.getElementById('generate-certificate').addEventListener('click', () => {
+                const studentName = "Student Name"; // Replace with actual student name logic
+                const certificateUrl = `certificate.html?courseName=${encodeURIComponent(courseTitle)}&studentName=${encodeURIComponent(studentName)}`;
+                window.location.href = certificateUrl;
+            });
+        } else {
+            console.error('Course not found');
         }
+    }).catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+});
 
-        const certificateData = {
-            courseTitle: courseTitle,
-            generatedOn: new Date().toISOString(),
-        };
+// Function to play a single video
+function playVideo(videoUrl, index) {
+    const videoContainer = document.createElement('div');
+    videoContainer.className = 'video-player-container';
+    const iframe = document.createElement('iframe');
+    iframe.width = '100%';
+    iframe.height = '315';
+    iframe.src = `https://www.youtube.com/embed/${new URL(videoUrl).searchParams.get("v")}`;
+    iframe.frameBorder = '0';
+    iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
 
-        existingCerts.push(certificateData);
-        await set(userCertsRef, existingCerts);
+    videoContainer.appendChild(iframe);
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Close';
+    closeButton.className = 'btn btn-danger mt-2';
+    closeButton.onclick = () => document.body.removeChild(videoContainer);
+    videoContainer.appendChild(closeButton);
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Certificate Generated!',
-            text: `Your certificate for ${courseTitle} has been generated.`,
-            confirmButtonText: 'OK',
-            showCloseButton: true
-        }).then(() => {
-            // Redirect to certificate.html
-            window.location.href = `certificate.html?course=${encodeURIComponent(courseTitle)}`;
-        });
-
-    } catch (error) {
-        console.error("Error generating certificate:", error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'There was an error generating the certificate. Please try again later.',
-            confirmButtonText: 'OK',
-            showCloseButton: true
-        });
-    }
+    document.body.appendChild(videoContainer);
 }
 
-window.generateCertificate = generateCertificate;
+// Save to Watch Later
+function saveToWatchLater(link) {
+    let watchLaterVideos = JSON.parse(localStorage.getItem('watchLaterVideos')) || [];
+    watchLaterVideos.push(link);
+    localStorage.setItem('watchLaterVideos', JSON.stringify(watchLaterVideos));
+    alert('Video added to Watch Later');
+}
+
+// Mark video as completed
+function completeVideo(index) {
+    // Placeholder for completion logic, e.g., updating UI, progress, etc.
+    alert(`Video ${index + 1} marked as complete!`);
+}
